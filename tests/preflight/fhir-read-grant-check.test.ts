@@ -319,6 +319,7 @@ test("live FHIR read grant check covers all four chart resources through compile
     "ChargeItem",
     "Communication",
     "Condition",
+    "Consent",
     "Coverage",
     "Device",
     "DeviceRequest",
@@ -378,7 +379,7 @@ test("FHIR read grant CLI passes only with full coverage and always prints its l
   assert.match(result.stdout, /Non-FHIR literal call sites excluded:\n- mcp\/src\/bulk-data\/router\.ts:141 router\.delete/);
   assert.match(result.stdout, /other names escape because receiver-independent matching would misclassify non-FHIR search APIs/);
   assert.match(result.stdout, /Type-level comparison does not prove criteria scope/);
-  assert.match(result.stdout, /Criteria-scoped resource types \(29\): Account, AdverseEvent, .*ServiceRequest/);
+  assert.match(result.stdout, /Criteria-scoped resource types \(30\): Account, AdverseEvent, .*ServiceRequest/);
   assert.match(result.stdout, /Basic: \d+ operations; \d+ scope-verified; \d+ NOT SCOPE-VERIFIED/);
 });
 

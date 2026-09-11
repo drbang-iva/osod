@@ -1,0 +1,6 @@
+Dedicated synthetic server; remove only staff Consent grant
+rg -n PATIENT_COMMS_CONSENT_RULE mcp/src/authz/roles.ts
+582:const PATIENT_COMMS_CONSENT_RULE: OdosResourceRule = {
+987:      PATIENT_COMMS_CONSENT_RULE,
+1090:      PATIENT_COMMS_CONSENT_RULE,
+Exit:0

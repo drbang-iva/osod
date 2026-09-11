@@ -1,0 +1,11 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -128,7 +128,7 @@
+   const explicit = readCommsPreferenceCells(patient);
+   return Object.fromEntries(COMMS_PURPOSES.map(purpose => [purpose, Object.fromEntries(COMMS_PREFERENCE_CHANNELS.map(channel => {
+     let cell: EffectiveCell;
+-    if (isOptedOut(patient, channel, "", channel === "sms" ? options.smsSenderNumber : undefined, options.stopScope ?? "per-number")) {
++    if (!explicit.some(c => c.purpose === purpose && c.channel === channel) && isOptedOut(patient, channel, "", channel === "sms" ? options.smsSenderNumber : undefined, options.stopScope ?? "per-number")) {
+       cell = { value: false, source: "suppression" };
+     } else {
+       const stored = explicit.find(c => c.purpose === purpose && c.channel === channel);

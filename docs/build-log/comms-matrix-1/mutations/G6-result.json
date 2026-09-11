@@ -1,0 +1,1 @@
+{"guard": "G6", "command": "npm --prefix mcp test -- '--test-name-pattern=^G2 preferences PUT all twenty ON' tests/commsPreferencesRoutes.test.ts", "red_exit": 1, "green_exit": 0}

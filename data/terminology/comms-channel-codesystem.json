@@ -1,0 +1,33 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "comms-channel",
+  "url": "https://odos2020.com/fhir/CodeSystem/comms-channel",
+  "version": "2026-09-10",
+  "name": "ODOSCommsChannel",
+  "title": "ODOS Comms Channel",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-09-11",
+  "publisher": "ODOS",
+  "description": "Local communication preference and evidence vocabulary.",
+  "caseSensitive": true,
+  "content": "complete",
+  "concept": [
+    {
+      "code": "sms",
+      "display": "Sms"
+    },
+    {
+      "code": "call",
+      "display": "Call"
+    },
+    {
+      "code": "email",
+      "display": "Email"
+    },
+    {
+      "code": "mail",
+      "display": "Mail"
+    }
+  ]
+}

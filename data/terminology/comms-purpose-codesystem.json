@@ -1,0 +1,37 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "comms-purpose",
+  "url": "https://odos2020.com/fhir/CodeSystem/comms-purpose",
+  "version": "2026-09-10",
+  "name": "ODOSCommsPurpose",
+  "title": "ODOS Comms Purpose",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-09-11",
+  "publisher": "ODOS",
+  "description": "Local communication preference and evidence vocabulary.",
+  "caseSensitive": true,
+  "content": "complete",
+  "concept": [
+    {
+      "code": "recalls",
+      "display": "Recalls"
+    },
+    {
+      "code": "appointment",
+      "display": "Appointment"
+    },
+    {
+      "code": "product-pickup",
+      "display": "Product pickup"
+    },
+    {
+      "code": "marketing-promo",
+      "display": "Marketing promo"
+    },
+    {
+      "code": "education",
+      "display": "Education"
+    }
+  ]
+}

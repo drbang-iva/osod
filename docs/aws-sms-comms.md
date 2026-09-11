@@ -78,3 +78,7 @@ test queue, confirm one inbound `Communication` is persisted, then confirm a sub
 attempt returns `patient-opt-out` without invoking AWS. Repeat with a signed Twilio inbound
 STOP-equivalent message when Twilio is the selected SMS provider. A local or mocked test is not proof
 that production access, carrier registration, two-way routing, or a real handset exchange works.
+
+## Communication preferences
+
+The server applies patient suppression before the purpose/channel preference matrix, then frequency caps and quiet hours. An explicit preference cannot undo STOP or an email opt-out. Accepted START restores the four nonmarketing text preferences in the same Patient update. Marketing SMS retains the legacy recorded-consent requirement; marketing email defaults ON while email opt-outs still block. A deliberate staff transactional education email can override a withheld Education × Email preference and records that cell ON after sending; a failed preference write reports `preferenceUpdate: "failed"` without reversing the sent result. Preference and consent-evidence routes use versioned Patient transactions; the evidence-gap report tracks missing evidence without gating sends. Call and mail preferences are recorded but have no automated sender. The preference screens are a separate delivery slice.

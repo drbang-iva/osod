@@ -1,0 +1,10 @@
+--- mcp/src/authz/roles.ts
++++ mcp/src/authz/roles.ts
+@@ -1010,7 +1010,6 @@
+       "communications.content.read",
+       "communications.send",
+       "communications.call",
+-      "communications.preferences.manage",
+       "communications.optout.manage",
+     ],
+     membershipParameters: [

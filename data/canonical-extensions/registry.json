@@ -979,6 +979,24 @@
       "namespace": "history",
       "status": "active",
       "sliceConsumer": "history-1d3"
+    },
+    {
+      "url": "https://odos2020.com/fhir/StructureDefinition/odos-comms-preference",
+      "namespace": "communications",
+      "status": "active",
+      "sliceConsumer": "comms-matrix"
+    },
+    {
+      "url": "https://odos2020.com/fhir/StructureDefinition/odos-comms-consent-scope",
+      "namespace": "communications",
+      "status": "active",
+      "sliceConsumer": "comms-matrix"
+    },
+    {
+      "url": "https://odos2020.com/fhir/StructureDefinition/odos-comms-consent-capture",
+      "namespace": "communications",
+      "status": "active",
+      "sliceConsumer": "comms-matrix"
     }
   ]
 }

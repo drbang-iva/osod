@@ -89,7 +89,7 @@ export type EducationDispatchResult =
   | { outcome: "sent"; providerMessageId: string; chartUpdate?: "conflict" }
   | { outcome: "print"; url: string }
   | { outcome: "refused"; reason: string }
-  | { outcome: "suppressed"; reason: "patient-opt-out" | "frequency-cap" }
+  | { outcome: "suppressed"; reason: "patient-opt-out" | "preference-withheld" | "frequency-cap" }
   | { outcome: "rescheduled"; reason: "quiet-hours"; rescheduledAt: string };
 
 export class CommunicationsResponseError extends Error {
@@ -297,7 +297,7 @@ function isEducationDispatchResult(value: unknown): value is EducationDispatchRe
   }
   if (value.outcome === "print") return typeof value.url === "string";
   if (value.outcome === "suppressed") {
-    return value.reason === "patient-opt-out" || value.reason === "frequency-cap";
+    return value.reason === "patient-opt-out" || value.reason === "preference-withheld" || value.reason === "frequency-cap";
   }
   if (value.outcome === "rescheduled") {
     return value.reason === "quiet-hours" && typeof value.rescheduledAt === "string";

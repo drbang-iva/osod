@@ -1,0 +1,103 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/commsEvidence.test.ts
+
+TAP version 13
+# Subtest: preference boundary rejects duplicate, excess, invalid enums, dates, and phone patient keys
+ok 1 - preference boundary rejects duplicate, excess, invalid enums, dates, and phone patient keys
+  ---
+  duration_ms: 3.319458
+  type: 'test'
+  ...
+# Subtest: Consent builder records complete scope, policy and capture; evidence closes only matching active cells
+ok 2 - Consent builder records complete scope, policy and capture; evidence closes only matching active cells
+  ---
+  duration_ms: 0.67025
+  type: 'test'
+  ...
+# Subtest: G2 all twenty cells preserve suppression byte-for-byte; confirmed writes include atomic Consent and provenance
+not ok 3 - G2 all twenty cells preserve suppression byte-for-byte; confirmed writes include atomic Consent and provenance
+  ---
+  duration_ms: 2.53475
+  type: 'test'
+  location: 'mcp/tests/commsEvidence.test.ts:1:2841'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+    + []
+    - [
+    -   {
+    -     extension: [
+    -       {
+    -         url: 'channel',
+    -         valueCode: 'sms'
+    -       },
+    -       {
+    -         url: 'scope',
+    -         valueCode: 'global'
+    -       }
+    -     ],
+    -     url: 'https://odos2020.com/fhir/StructureDefinition/odos-comms-opt-out'
+    -   }
+    - ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      url: 'https://odos2020.com/fhir/StructureDefinition/odos-comms-opt-out'
+      extension:
+        0:
+          url: 'channel'
+          valueCode: 'sms'
+        1:
+          url: 'scope'
+          valueCode: 'global'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/commsEvidence.test.ts:48:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: evidence attachment preserves explicit values and setter metadata without creating default cells
+ok 4 - evidence attachment preserves explicit values and setter metadata without creating default cells
+  ---
+  duration_ms: 0.367917
+  type: 'test'
+  ...
+# Subtest: gap report filters tiers using active evidence and refuses incomplete evidence pages
+ok 5 - gap report filters tiers using active evidence and refuses incomplete evidence pages
+  ---
+  duration_ms: 0.661917
+  type: 'test'
+  ...
+# Subtest: report stops at its row bound and resumes without skipping patients
+ok 6 - report stops at its row bound and resumes without skipping patients
+  ---
+  duration_ms: 31.096541
+  type: 'test'
+  ...
+# Subtest: report stops at 100 Patient pages even when a filter yields no rows
+ok 7 - report stops at 100 Patient pages even when a filter yields no rows
+  ---
+  duration_ms: 44.378916
+  type: 'test'
+  ...
+# Subtest: preference transaction failure preserves status for optimistic race mapping
+ok 8 - preference transaction failure preserves status for optimistic race mapping
+  ---
+  duration_ms: 0.320208
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 7
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 310.950583

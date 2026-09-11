@@ -1,0 +1,1 @@
+{"guard": "G21", "command": "npm --prefix mcp test -- '--test-name-pattern=^G21 preference PUT optimistic conflict' tests/commsPreferencesRoutes.test.ts", "red_exit": 1, "green_exit": 0}

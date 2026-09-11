@@ -1,0 +1,1 @@
+{"guard": "G5", "command": "npx tsx scripts/preflight-lint.ts", "red_exit": 1, "green_exit": 0}

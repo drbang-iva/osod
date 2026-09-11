@@ -220,6 +220,7 @@ async function handlePatientRegistration(req: Request, res: Response, deps: Clin
         staffReference: staff.staffReference,
         actorRole: staff.actorRole,
         roles: staff.roles ?? [staff.actorRole],
+        businessActions: staff.businessActions,
         project: staff.project,
       },
       {

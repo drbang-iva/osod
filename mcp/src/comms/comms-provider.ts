@@ -8,6 +8,8 @@ export interface CommsCapabilities {
 }
 
 export interface SuppressionContext {
+  staffEducationOverride?: true;
+  consentClass?: "transactional" | "marketing";
   requiresMarketingConsent?: boolean;
   frequencyCapDays?: number;
   quietHoursExemption?: "staff-initiated-chart-education";
@@ -43,7 +45,7 @@ export type SendResult =
     }
   | {
       outcome: "suppressed";
-      reason: "patient-opt-out" | "frequency-cap";
+      reason: "patient-opt-out" | "preference-withheld" | "frequency-cap";
     }
   | {
       outcome: "rescheduled";

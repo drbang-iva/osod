@@ -1,0 +1,11 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -371,7 +371,7 @@
+   const initialBundle = await fhir.search<Patient>("Patient", { telecom: event.from, _count: "100" });
+   const patients = await collectInboundPatients(fhir, initialBundle);
+   if (patients.length === 0) return { outcome: "no-patient-match", matchedPatients: 0 };
+-  if (optOutType === "START" && patients.length > 1) {
++  if (false && optOutType === "START" && patients.length > 1) {
+     return { outcome: "opt-in-refused-shared-number", matchedPatients: patients.length };
+   }
+   if (!optOutType || optOutType === "HELP") {

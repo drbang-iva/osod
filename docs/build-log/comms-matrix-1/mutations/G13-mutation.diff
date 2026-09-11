@@ -1,0 +1,11 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -401,7 +401,7 @@
+     if (optOutType === "START") {
+       remainingOptOuts = summarizeSmsOptOuts(nextExtensions);
+       if (!remainingOptOuts.global) {
+-        const purposes: CommsPurpose[] = ["recalls", "appointment", "product-pickup", "education"];
++        const purposes: CommsPurpose[] = ["recalls", "appointment", "product-pickup", "education", "marketing-promo"];
+         const explicit = readCommsPreferenceCells(patient);
+         if (!purposes.every(purpose => explicit.some(cell => cell.purpose === purpose && cell.channel === "sms" && cell.allowed))) {
+           nextExtensions = replaceCommsPreferenceCells({ ...patient, extension: nextExtensions }, purposes.map(purpose => ({ purpose, channel: "sms", allowed: true })), {

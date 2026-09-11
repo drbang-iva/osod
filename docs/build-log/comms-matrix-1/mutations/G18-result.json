@@ -1,0 +1,1 @@
+{"guard": "G18", "command": "npm --prefix mcp test -- tests/commsPreferences.test.ts", "red_exit": 1, "green_exit": 0}

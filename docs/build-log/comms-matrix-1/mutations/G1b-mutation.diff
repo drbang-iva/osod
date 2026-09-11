@@ -1,0 +1,10 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -547,6 +547,7 @@
+ ): Promise<{ patient: Patient; now: Date; result?: Exclude<SendResult, { outcome: "sent" }> }> {
+   const now = deps.now?.() ?? new Date();
+   const patient = await readPatient(deps.fhir, request.patientReference);
++  if (readCommsPreferenceCells(patient).some(cell => cell.purpose === communicationPurpose(request.campaignType, request.suppression.consentClass) && cell.channel === channel && cell.allowed)) return { patient, now };
+   if (isOptedOut(
+     patient,
+     channel,

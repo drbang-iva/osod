@@ -1,0 +1,11 @@
+--- mcp/src/comms/comms-api.ts
++++ mcp/src/comms/comms-api.ts
+@@ -1309,7 +1309,7 @@
+       suppression: { ...requiredConsent, ...(staffEducationOverride ? { staffEducationOverride: true as const } : {}) },
+     });
+     if (result.outcome === "sent") {
+-      if (withheldEducationEmail && actor.kind === "staff") {
++      if (false && withheldEducationEmail && actor.kind === "staff") {
+         try {
+           await writeCommsPreferences(actor.staff.fhir, body.patientReference, [{ purpose: "education", channel: "email", allowed: true }], {
+             actorReference: await preferencePractitioner(actor.staff), actorRole: actor.staff.actorRole,

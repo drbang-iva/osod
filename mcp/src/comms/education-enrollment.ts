@@ -645,7 +645,7 @@ function parseOutcome(extension: Extension, code: string): EducationEnrollmentSe
   }
   if (code === "suppressed") {
     const reason = nestedValue(extension, "reason", "valueCode");
-    if (reason !== "patient-opt-out" && reason !== "frequency-cap") {
+    if (reason !== "patient-opt-out" && reason !== "preference-withheld" && reason !== "frequency-cap") {
       throw new Error("Stored EducationEnrollment suppressed reason is invalid.");
     }
     return { outcome: "suppressed", reason };

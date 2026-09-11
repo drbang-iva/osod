@@ -225,7 +225,7 @@ test("role-aware Twilio dispatch sends from each resolved lane number", async ()
     patientReference: "Patient/synthetic-1",
     toNumber: "+18645550199",
     body: "Synthetic lane proof",
-    campaignType: "manual",
+    campaignType: "staff-initiated",
     suppression: {},
   };
 

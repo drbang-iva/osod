@@ -1,0 +1,10 @@
+--- a/mcp/src/authz/roles.ts
++++ b/mcp/src/authz/roles.ts
+@@ -1038,7 +1038,6 @@
+       ...PROTOCOL_RUNTIME_RESOURCE_RULES,
+       ...OFFICE_CHANNEL_RESOURCE_RULES,
+       FRONT_DESK_PATIENT_COMMUNICATION_RULE,
+-      PATIENT_COMMS_CONSENT_RULE,
+     ],
+   },
+   admin: {

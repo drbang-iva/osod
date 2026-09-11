@@ -1,0 +1,96 @@
+Command: npm --prefix mcp test -- tests/searchParamContract.test.ts
+Captured process exit: 1
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/searchParamContract.test.ts
+
+TAP version 13
+# Subtest: contract is frozen from Medplum 5.1.8's published definition bundles
+not ok 1 - contract is frozen from Medplum 5.1.8's published definition bundles
+  ---
+  duration_ms: 1.542041
+  type: 'test'
+  location: 'mcp/tests/searchParamContract.test.ts:1:5432'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    37 !== 38
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 38
+  actual: 37
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/searchParamContract.test.ts:146:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: historical ChargeItem status search is rejected while known-valid searches pass
+ok 2 - historical ChargeItem status search is rejected while known-valid searches pass
+  ---
+  duration_ms: 0.252125
+  type: 'test'
+  ...
+# Subtest: all direct fhir.search call sites are statically resolved or explicitly dynamic
+not ok 3 - all direct fhir.search call sites are statically resolved or explicitly dynamic
+  ---
+  duration_ms: 437.095167
+  type: 'test'
+  location: 'mcp/tests/searchParamContract.test.ts:1:6531'
+  failureType: 'testCodeFailure'
+  error: 'src/comms/comms-preferences.ts:166 searches unmapped Consent'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/searchParamContract.test.ts:169:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: static audit finds zero invalid search parameters
+not ok 4 - static audit finds zero invalid search parameters
+  ---
+  duration_ms: 255.970041
+  type: 'test'
+  location: 'mcp/tests/searchParamContract.test.ts:1:7586'
+  failureType: 'testCodeFailure'
+  error: 'MEDPLUM_5_1_8_SEARCH_PARAMETERS[resourceType] is not iterable'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    invalidSearchParameterKeys (mcp/tests/search-param-contract.ts:65:8)
+    <anonymous> (mcp/tests/searchParamContract.test.ts:189:5)
+    Array.flatMap (<anonymous>)
+    TestContext.<anonymous> (mcp/tests/searchParamContract.test.ts:188:43)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: static audit rejects a mistyped dynamic override key
+ok 5 - static audit rejects a mistyped dynamic override key
+  ---
+  duration_ms: 251.1905
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 2
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1536.609333

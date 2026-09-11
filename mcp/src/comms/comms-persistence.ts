@@ -343,7 +343,7 @@ export function staffSmsTerminalResult(
     identifier.system === system)?.value;
   const outcome = value(ODOS_COMMS_STAFF_SEND_OUTCOME_IDENTIFIER_SYSTEM);
   const reason = value(ODOS_COMMS_STAFF_SEND_REASON_IDENTIFIER_SYSTEM);
-  if (outcome === "suppressed" && (reason === "patient-opt-out" || reason === "frequency-cap")) {
+  if (outcome === "suppressed" && (reason === "patient-opt-out" || reason === "preference-withheld" || reason === "frequency-cap")) {
     return { outcome, reason };
   }
   const rescheduledAt = value(ODOS_COMMS_STAFF_SEND_RESCHEDULED_AT_IDENTIFIER_SYSTEM);

@@ -1,0 +1,33 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "comms-preference-surface",
+  "url": "https://odos2020.com/fhir/CodeSystem/comms-preference-surface",
+  "version": "2026-09-10",
+  "name": "ODOSCommsPreferenceSurface",
+  "title": "ODOS Comms Preference Surface",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-09-11",
+  "publisher": "ODOS",
+  "description": "Local communication preference and evidence vocabulary.",
+  "caseSensitive": true,
+  "content": "complete",
+  "concept": [
+    {
+      "code": "staff-demographics",
+      "display": "Staff demographics"
+    },
+    {
+      "code": "staff-registration",
+      "display": "Staff registration"
+    },
+    {
+      "code": "staff-manual-send",
+      "display": "Staff manual send"
+    },
+    {
+      "code": "inbound-start",
+      "display": "Inbound start"
+    }
+  ]
+}

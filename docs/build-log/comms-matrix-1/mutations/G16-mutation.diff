@@ -1,0 +1,11 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -556,7 +556,7 @@
+   )) {
+     return { patient, now, result: { outcome: "suppressed", reason: "patient-opt-out" } };
+   }
+-  if (channel === "sms" && request.suppression.requiresMarketingConsent && !hasRecordedMarketingConsent(patient)) {
++  if (request.suppression.requiresMarketingConsent && !hasRecordedMarketingConsent(patient)) {
+     return { patient, now, result: { outcome: "suppressed", reason: "preference-withheld" } };
+   }
+   const purpose = communicationPurpose(request.campaignType, request.suppression.consentClass);

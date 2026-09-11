@@ -1,0 +1,62 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/commsEvidence.test.ts
+
+TAP version 13
+# Subtest: preference boundary rejects duplicate, excess, invalid enums, dates, and phone patient keys
+ok 1 - preference boundary rejects duplicate, excess, invalid enums, dates, and phone patient keys
+  ---
+  duration_ms: 3.330917
+  type: 'test'
+  ...
+# Subtest: Consent builder records complete scope, policy and capture; evidence closes only matching active cells
+ok 2 - Consent builder records complete scope, policy and capture; evidence closes only matching active cells
+  ---
+  duration_ms: 0.724791
+  type: 'test'
+  ...
+# Subtest: G2 all twenty cells preserve suppression byte-for-byte; confirmed writes include atomic Consent and provenance
+ok 3 - G2 all twenty cells preserve suppression byte-for-byte; confirmed writes include atomic Consent and provenance
+  ---
+  duration_ms: 1.428167
+  type: 'test'
+  ...
+# Subtest: evidence attachment preserves explicit values and setter metadata without creating default cells
+ok 4 - evidence attachment preserves explicit values and setter metadata without creating default cells
+  ---
+  duration_ms: 0.303167
+  type: 'test'
+  ...
+# Subtest: gap report filters tiers using active evidence and refuses incomplete evidence pages
+ok 5 - gap report filters tiers using active evidence and refuses incomplete evidence pages
+  ---
+  duration_ms: 0.759833
+  type: 'test'
+  ...
+# Subtest: report stops at its row bound and resumes without skipping patients
+ok 6 - report stops at its row bound and resumes without skipping patients
+  ---
+  duration_ms: 28.425084
+  type: 'test'
+  ...
+# Subtest: report stops at 100 Patient pages even when a filter yields no rows
+ok 7 - report stops at 100 Patient pages even when a filter yields no rows
+  ---
+  duration_ms: 44.664791
+  type: 'test'
+  ...
+# Subtest: preference transaction failure preserves status for optimistic race mapping
+ok 8 - preference transaction failure preserves status for optimistic race mapping
+  ---
+  duration_ms: 0.316958
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 275.688542

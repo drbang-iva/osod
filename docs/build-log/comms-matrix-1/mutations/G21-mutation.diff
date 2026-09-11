@@ -1,0 +1,5 @@
+--- mcp/src/comms/comms-preferences.ts
++++ mcp/src/comms/comms-preferences.ts
+@@ -58,1 +58,1 @@
+-    status: Number.parseInt(failed.response?.status ?? "", 10),
++    statusRemoved: Number.parseInt(failed.response?.status ?? "", 10),

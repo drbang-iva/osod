@@ -1,0 +1,10 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -128,1 +128,2 @@
+-  const explicit = readCommsPreferenceCells(patient);
++  let explicit: ExplicitCommsPreference[];
++  try { explicit = readCommsPreferenceCells(patient); } catch { explicit = []; }
+@@ -405,1 +406,2 @@
+-        const explicit = readCommsPreferenceCells(patient);
++        let explicit: ExplicitCommsPreference[];
++  try { explicit = readCommsPreferenceCells(patient); } catch { explicit = []; }

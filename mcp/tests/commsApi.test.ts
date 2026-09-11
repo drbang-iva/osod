@@ -420,8 +420,8 @@ test("only transactional staff chart education receives the quiet-hours exemptio
     }
 
     assert.deepEqual(fixture.smsRequests.map(({ suppression }) => suppression), [
-      { quietHoursExemption: "staff-initiated-chart-education" },
-      {},
+      { quietHoursExemption: "staff-initiated-chart-education", consentClass: "transactional" },
+      { consentClass: "marketing" },
     ]);
   } finally {
     await fixture.close();
@@ -2434,5 +2434,35 @@ function request(base: string, path: string, method: string, body?: unknown, rol
       } : {}),
     },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  });
+}
+
+for (const failure of [undefined, new Error("Synthetic preference write failure"), Object.assign(new Error("Synthetic preference conflict"), { status: 412 })]) {
+  test(failure ? `G19${"status" in failure ? "b" : ""} sent email survives preference flip failure` : "G12 staff email flips withheld Education email ON with staff provenance", async () => {
+    const { replaceCommsPreferenceCells, readCommsPreferenceCells } = await import("../src/comms/suppression-gate.js");
+    const fixture = await startServer({ optOutTransactionError: failure });
+    try {
+      fixture.patients[0] = replaceCommsPreferenceCells(fixture.patients[0], [{ purpose: "education", channel: "email", allowed: false }], {
+        setBy: { reference: "Practitioner/staff" }, surface: "staff-demographics", recordedAt: "2026-08-01T15:00:00Z",
+      });
+      const response = await request(fixture.base, "/communications/education/dispatch", "POST", {
+        patientReference: PATIENT_REFERENCE, educationId: "dry-eye-basics", version: 2, channel: "email", lane: "clinical", idempotencyKey: "education-preference-flip",
+      }, "staff");
+      assert.equal(response.status, 200);
+      const body = await response.json() as any;
+      assert.equal(body.outcome, "sent");
+      assert.equal(fixture.emailRequests.length, 1);
+      assert.equal(fixture.emailRequests[0].suppression.staffEducationOverride, true);
+      if (failure) {
+        assert.equal(body.preferenceUpdate, "failed");
+        assert.equal(readCommsPreferenceCells(fixture.patients[0])[0].allowed, false);
+      } else {
+        const cell = readCommsPreferenceCells(fixture.patients[0])[0];
+        assert.equal(cell.allowed, true);
+        assert.equal(cell.surface, "staff-manual-send");
+        assert.equal(cell.setBy.reference, "Practitioner/staff");
+        assert.equal(fixture.attributedActors.length, 1);
+      }
+    } finally { await fixture.close(); }
   });
 }

@@ -1,0 +1,37 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs --test-name-pattern=^G19b  tests/commsApi.test.ts
+
+TAP version 13
+# Subtest: G19b sent email survives preference flip failure
+not ok 1 - G19b sent email survives preference flip failure
+  ---
+  duration_ms: 26.244625
+  type: 'test'
+  location: 'mcp/tests/commsApi.test.ts:1:79615'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    409 !== 200
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 409
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/commsApi.test.ts:2451:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 384.29675

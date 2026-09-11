@@ -10,7 +10,7 @@ export const EDUCATION_SEQUENCE_ENROLLMENT_RESERVE_BYTES = 16384;
 export const EDUCATION_SEQUENCE_EXTENSION = "https://odos2020.com/fhir/StructureDefinition/education-enrollment-scheduled-send";
 export const EDUCATION_ACTIVATION_EXTENSION = "https://odos2020.com/fhir/StructureDefinition/education-enrollment-sequence-activation";
 export type EducationSchedulingDisposition = "waiting" | "scheduled" | "held" | "cancelled" | "closed";
-export type EducationSchedulingHoldReason = "patient-opt-out" | "patient-seen" | "content-unavailable" | "no-recipient-channel" | "needs-acknowledgement";
+export type EducationSchedulingHoldReason = "patient-opt-out" | "preference-withheld" | "patient-seen" | "content-unavailable" | "no-recipient-channel" | "needs-acknowledgement";
 export interface EducationSchedulingEvent {
   kind: "started" | "stopped" | "held" | "cancelled" | "rescheduled" | "released";
   actor: string;
@@ -287,7 +287,7 @@ export function validateStoredEducationSequences(enrollment: EducationEnrollment
     }
     if (!["waiting", "scheduled", "held", "cancelled", "closed"].includes(row.disposition))
       throw new Error("Stored scheduling disposition is invalid.");
-    if (row.disposition === "held" && !["patient-opt-out", "patient-seen", "content-unavailable", "no-recipient-channel", "needs-acknowledgement"].includes(row.holdReason ?? ""))
+    if (row.disposition === "held" && !["patient-opt-out", "preference-withheld", "patient-seen", "content-unavailable", "no-recipient-channel", "needs-acknowledgement"].includes(row.holdReason ?? ""))
       throw new Error("Stored scheduling hold reason is invalid.");
     if (row.senderReference !== enrollment.enrolledBy)
       throw new Error("Stored scheduled sender differs from enrolling practitioner.");

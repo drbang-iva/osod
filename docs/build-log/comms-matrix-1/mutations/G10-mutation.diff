@@ -1,0 +1,11 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -561,7 +561,7 @@
+   }
+   const purpose = communicationPurpose(request.campaignType, request.suppression.consentClass);
+   if (purpose && !effectiveCommsPreferences(patient, deps)[purpose][channel].value
+-    && !(request.suppression.staffEducationOverride && channel === "email" && purpose === "education")) {
++    && !(request.suppression.staffEducationOverride && purpose === "education")) {
+     return { patient, now, result: { outcome: "suppressed", reason: "preference-withheld" } };
+   }
+   if (

@@ -1,0 +1,328 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/commsPreferences.test.ts tests/reminderEngine.test.ts
+
+TAP version 13
+# Subtest: preference defaults remain implicit and explicit cells retain attribution
+ok 1 - preference defaults remain implicit and explicit cells retain attribution
+  ---
+  duration_ms: 1.174166
+  type: 'test'
+  ...
+# Subtest: malformed and duplicate preference extensions refuse resolution
+ok 2 - malformed and duplicate preference extensions refuse resolution
+  ---
+  duration_ms: 0.233417
+  type: 'test'
+  ...
+# Subtest: G4 and manual campaign types fail closed
+not ok 3 - G4 and manual campaign types fail closed
+  ---
+  duration_ms: 0.267292
+  type: 'test'
+  location: 'mcp/tests/commsPreferences.test.ts:1:1770'
+  failureType: 'testCodeFailure'
+  error: 'Communications campaignType "appointment-reminder" has no communication purpose; register it in PURPOSE_BY_CAMPAIGN_TYPE.'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    communicationPurpose (mcp/src/comms/suppression-gate.ts:47:9)
+    Module.checkMessageSuppression (mcp/src/comms/suppression-gate.ts:561:19)
+    async TestContext.<anonymous> (mcp/tests/commsPreferences.test.ts:25:17)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: G16 marketing email is default ON while legacy marketing SMS remains withheld
+ok 4 - G16 marketing email is default ON while legacy marketing SMS remains withheld
+  ---
+  duration_ms: 10.741083
+  type: 'test'
+  ...
+# Subtest: G17 explicit marketing SMS ON cannot bypass legacy consent
+ok 5 - G17 explicit marketing SMS ON cannot bypass legacy consent
+  ---
+  duration_ms: 0.14125
+  type: 'test'
+  ...
+# Subtest: G18 malformed cell refuses a send
+ok 6 - G18 malformed cell refuses a send
+  ---
+  duration_ms: 0.110542
+  type: 'test'
+  ...
+# Subtest: G10 override is restricted to education email
+ok 7 - G10 override is restricted to education email
+  ---
+  duration_ms: 0.394167
+  type: 'test'
+  ...
+# Subtest: G1 G3 STOP wins over explicit education SMS ON and resolver reports suppression
+ok 8 - G1 G3 STOP wins over explicit education SMS ON and resolver reports suppression
+  ---
+  duration_ms: 0.186584
+  type: 'test'
+  ...
+# Subtest: G11 staff email override cannot bypass email unsubscribe
+ok 9 - G11 staff email override cannot bypass email unsubscribe
+  ---
+  duration_ms: 0.248167
+  type: 'test'
+  ...
+# Subtest: signed offset math supports reminders before and campaigns after independently configured anchor fields
+ok 10 - signed offset math supports reminders before and campaigns after independently configured anchor fields
+  ---
+  duration_ms: 1.417208
+  type: 'test'
+  ...
+# Subtest: practice reminder configuration supports email, SMS, or both channels
+ok 11 - practice reminder configuration supports email, SMS, or both channels
+  ---
+  duration_ms: 0.324291
+  type: 'test'
+  ...
+# Subtest: Appointment end anchors reject the non-standard end search parameter
+ok 12 - Appointment end anchors reject the non-standard end search parameter
+  ---
+  duration_ms: 10.189959
+  type: 'test'
+  ...
+# Subtest: a missed negative-offset reminder catches up while its Appointment is still upcoming
+not ok 13 - a missed negative-offset reminder catches up while its Appointment is still upcoming
+  ---
+  duration_ms: 3.494375
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:5821'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed'
+    -   'sent'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'sent'
+  actual:
+    0: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:282:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a due-anchor sweep follows FHIR next links so later Appointment pages are reachable
+not ok 14 - a due-anchor sweep follows FHIR next links so later Appointment pages are reachable
+  ---
+  duration_ms: 1.065667
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:6605'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed',
+    +   'failed'
+    -   'sent',
+    -   'sent'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'sent'
+    1: 'sent'
+  actual:
+    0: 'failed'
+    1: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:340:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: engine reads Appointment anchors, dispatches both signed directions through the gate, persists Communication state, and is idempotent
+not ok 15 - engine reads Appointment anchors, dispatches both signed directions through the gate, persists Communication state, and is idempotent
+  ---
+  duration_ms: 0.670541
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:7986'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed',
+    +   'failed'
+    -   'sent',
+    -   'sent'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'sent'
+    1: 'sent'
+  actual:
+    0: 'failed'
+    1: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:381:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reminder engine dispatches an SMS campaign without duplicating its anchor and offset path
+not ok 16 - reminder engine dispatches an SMS campaign without duplicating its anchor and offset path
+  ---
+  duration_ms: 0.547084
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:9547'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed'
+    -   'sent'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'sent'
+  actual:
+    0: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:435:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: an outside-hours Communication held by the gate is claimed and sent at the persisted next-window opening
+not ok 17 - an outside-hours Communication held by the gate is claimed and sent at the persisted next-window opening
+  ---
+  duration_ms: 0.487875
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:10669'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed'
+    -   'rescheduled'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'rescheduled'
+  actual:
+    0: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:477:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a held-send sweep follows FHIR next links after its positive-offset due window has passed
+not ok 18 - a held-send sweep follows FHIR next links after its positive-offset due window has passed
+  ---
+  duration_ms: 0.482917
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:11910'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed'
+    -   'rescheduled'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'rescheduled'
+  actual:
+    0: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:518:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a quiet-hours-held reminder is abandoned when its Appointment is cancelled before release
+not ok 19 - a quiet-hours-held reminder is abandoned when its Appointment is cancelled before release
+  ---
+  duration_ms: 0.719625
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:13647'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed'
+    -   'rescheduled'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'rescheduled'
+  actual:
+    0: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:597:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a held pre-appointment reminder is abandoned when the next quiet-hours opening is after the visit
+not ok 20 - a held pre-appointment reminder is abandoned when the next quiet-hours opening is after the visit
+  ---
+  duration_ms: 0.460042
+  type: 'test'
+  location: 'mcp/tests/reminderEngine.test.ts:1:14750'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      [
+    +   'failed'
+    -   'rescheduled'
+      ]
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'rescheduled'
+  actual:
+    0: 'failed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/reminderEngine.test.ts:638:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 11
+# fail 9
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 445.137334

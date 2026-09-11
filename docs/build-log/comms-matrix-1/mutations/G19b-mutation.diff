@@ -1,0 +1,12 @@
+--- mcp/src/comms/comms-api.ts
++++ mcp/src/comms/comms-api.ts
+@@ -1315,7 +1315,8 @@
+             actorReference: await preferencePractitioner(actor.staff), actorRole: actor.staff.actorRole,
+             policyUrl: actor.staff.authorizationPolicyUrl, recordedAt: deps.now?.() ?? new Date().toISOString(), surface: "staff-manual-send",
+           });
+-        } catch {
++        } catch (error) {
++          throw error;
+           onPreferenceFailure?.();
+           console.error("odos-mcp: education email sent; preference update failed.");
+         }

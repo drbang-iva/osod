@@ -1,0 +1,50 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/educationEnrollment.test.ts
+
+TAP version 13
+# Subtest: EducationEnrollment in-memory persistence records stage 1 truth and refuses the same active journey across versions
+ok 1 - EducationEnrollment in-memory persistence records stage 1 truth and refuses the same active journey across versions
+  ---
+  duration_ms: 1.475083
+  type: 'test'
+  ...
+# Subtest: EducationEnrollment FHIR Basic round-trip preserves exact sends, outcomes, and repeated stage history
+ok 2 - EducationEnrollment FHIR Basic round-trip preserves exact sends, outcomes, and repeated stage history
+  ---
+  duration_ms: 1.449167
+  type: 'test'
+  ...
+# Subtest: EducationEnrollment FHIR terminal transition preserves prior truth and removes only the active identifier with If-Match
+ok 3 - EducationEnrollment FHIR terminal transition preserves prior truth and removes only the active identifier with If-Match
+  ---
+  duration_ms: 1.044584
+  type: 'test'
+  ...
+# Subtest: G8 preference-withheld survives FHIR enrollment round-trip
+not ok 4 - G8 preference-withheld survives FHIR enrollment round-trip
+  ---
+  duration_ms: 0.161334
+  type: 'test'
+  location: 'mcp/tests/educationEnrollment.test.ts:1:8891'
+  failureType: 'testCodeFailure'
+  error: 'Stored EducationEnrollment suppressed reason is invalid.'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    parseOutcome (mcp/src/comms/education-enrollment.ts:649:13)
+    parseImmediateSend (mcp/src/comms/education-enrollment.ts:622:34)
+    Array.map (<anonymous>)
+    parseEnrollment (mcp/src/comms/education-enrollment.ts:529:8)
+    TestContext.<anonymous> (mcp/tests/educationEnrollment.test.ts:284:20)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 3
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 187.288792

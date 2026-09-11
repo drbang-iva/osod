@@ -29,3 +29,7 @@
 | History item-review target | `https://odos2020.com/fhir/StructureDefinition/odos-history-review-target` | `0..*` on Observation; item acts enumerate at least one | Each `valueString` holds one exact ReviewTarget JSON object. Target membership, optional optionCode and eye are validated at the endpoint; no wildcard matching. The string StructureDefinition does not validate JSON members. | v0.6-verification-ledger.md row 61; `data/canonical-extensions/odos-history-review-target.json` |
 
 Clinical attestation, amendment routing, audit classification, and Information Blocking logic consume `Observation.status`, not this extension.
+
+| Communication preference cell | `https://odos2020.com/fhir/StructureDefinition/odos-comms-preference` | `0..*` on Patient | One explicit purpose/channel choice, recorder, surface, time and optional Consent evidence; never replaces suppression | native-comms-slice1-ledger.md |
+| Communication consent scope | `https://odos2020.com/fhir/StructureDefinition/odos-comms-consent-scope` | `0..*` on Consent | Purpose/channel pair covered by evidence | native-comms-slice1-ledger.md |
+| Communication consent capture | `https://odos2020.com/fhir/StructureDefinition/odos-comms-consent-capture` | `0..1` on Consent | Staff surface and in-person or paper-form capture method | native-comms-slice1-ledger.md |

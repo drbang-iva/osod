@@ -1,0 +1,5 @@
+mcp/tests/search-param-contract.ts:25
+  Consent: "_content _count _id _lastUpdated _profile _query _security _sort _source _tag _text action actor category consentor data date identifier organization patient period purpose scope security-label source-reference status".split(" "),
+mcp/tests/searchParamContract.test.ts:146
+  assert.equal(Object.keys(MEDPLUM_5_1_8_SEARCH_PARAMETERS).length, 38);
+Mutation restored: Consent entry present; resource count assertion remains 38.

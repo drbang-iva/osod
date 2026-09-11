@@ -1,3 +1,6 @@
+import { resolvePractitionerReference } from "../authz/practitioner-reference.js";
+import { buildCommsConsent, communicationPreferencesInputSchema, parsePreferenceWriteInput } from "../comms/comms-preferences.js";
+import { replaceCommsPreferenceCells } from "../comms/suppression-gate.js";
 import { randomInt, randomUUID } from "node:crypto";
 import type {
   Account,
@@ -11,7 +14,7 @@ import type {
 } from "@medplum/fhirtypes";
 import { z } from "zod";
 import { grantNewlyRegisteredPatientAccess } from "../authz/role-grants.js";
-import { assertBusinessActionAllowed, type PracticeRoleId } from "../authz/roles.js";
+import { assertBusinessActionAllowed, staffHasBusinessAction, type BusinessAction, type PracticeRoleId } from "../authz/roles.js";
 import type { MedplumClient } from "../fhir-client.js";
 import { searchProjectAll } from "../fhir-search.js";
 import {
@@ -46,6 +49,7 @@ const patientRegistrationInputSchema = z.object({
   demographics: demographicsSchema,
   responsibleParties: z.array(responsiblePartySchema),
   confirmDuplicate: z.boolean().default(false),
+  communicationPreferences: communicationPreferencesInputSchema.optional(),
 }).strict();
 
 export type PatientRegistrationInput = z.infer<typeof patientRegistrationInputSchema>;
@@ -55,6 +59,7 @@ export interface PatientRegistrationStaff {
   staffReference: string;
   actorRole: PracticeRoleId;
   roles: readonly PracticeRoleId[];
+  businessActions?: readonly BusinessAction[];
   project: Reference<Project>;
 }
 
@@ -80,7 +85,21 @@ export async function registerPatientFromDemographics(
   } catch (error) {
     throw Object.assign(error instanceof Error ? error : new Error(String(error)), { status: 403 });
   }
-  const today = registrationDate(deps.now?.());
+  const recordedAt = deps.now?.() ?? new Date().toISOString();
+  let preferencePractitioner: string | undefined;
+  if (input.communicationPreferences) {
+    if (!staffHasBusinessAction(staff, "communications.preferences.manage")) {
+      throw Object.assign(new Error("communications.preferences.manage role required"), { status: 403 });
+    }
+    try {
+      parsePreferenceWriteInput({ patientReference: "Patient/registration", ...input.communicationPreferences }, recordedAt);
+    } catch (error) {
+      throw Object.assign(error instanceof Error ? error : new Error("Invalid communication preferences."), { status: 400 });
+    }
+    preferencePractitioner = await resolvePractitionerReference(deps.serviceFhir, staff.staffReference);
+    if (!preferencePractitioner) throw new Error("Registration preferences require the registering Practitioner.");
+  }
+  const today = registrationDate(recordedAt);
   validateRegistration(input, today);
   const projectId = registrationProjectId(staff.project);
   const duplicates = await findExactDuplicates(deps.serviceFhir, projectId, input.demographics);
@@ -89,7 +108,7 @@ export async function registerPatientFromDemographics(
   }
 
   const reservation = await reserveMrn(deps.serviceFhir, projectId);
-  const request = buildPatientIdentityTransaction(input, reservation, today, projectId);
+  const request = buildPatientIdentityTransaction(input, reservation, today, projectId, preferencePractitioner, recordedAt);
   let response: Bundle;
   try {
     response = await deps.serviceFhir.executeTransactionAsActor(
@@ -192,9 +211,11 @@ function buildPatientIdentityTransaction(
   reservation: ReservedMrn,
   today: string,
   projectId: string,
+  preferencePractitioner?: string,
+  recordedAt?: string,
 ): Bundle {
   const patientFullUrl = `urn:uuid:${randomUUID()}`;
-  const patient = registrationResourceInProject<Patient>({
+  let patient = registrationResourceInProject<Patient>({
     resourceType: "Patient",
     active: true,
     identifier: [{ use: "usual", type: { text: "ODOS medical record number" }, system: ODOS_MRN_SYSTEM, value: reservation.mrn }],
@@ -212,7 +233,22 @@ function buildPatientIdentityTransaction(
       ? [{ use: "home", line: input.demographics.address.trim() ? [input.demographics.address.trim()] : undefined, city: input.demographics.city.trim() || undefined, state: input.demographics.state.trim() || undefined, postalCode: input.demographics.postalCode.trim() || undefined }]
       : undefined,
   }, projectId);
+  let consentEntry: BundleEntry | undefined;
+  if (input.communicationPreferences) {
+    const preferences = input.communicationPreferences;
+    const actor = { actorReference: preferencePractitioner!, actorRole: "staff" as const, recordedAt: recordedAt!, surface: "staff-registration" as const };
+    const evidenceReference = preferences.confirmedVia ? `urn:uuid:${randomUUID()}` : undefined;
+    patient = replaceCommsPreferenceCells(patient, preferences.cells.map(cell => ({ ...cell, ...(evidenceReference ? { evidence: { reference: evidenceReference } } : {}) })), {
+      setBy: { reference: preferencePractitioner! }, surface: "staff-registration", recordedAt: recordedAt!,
+    });
+    if (evidenceReference) consentEntry = {
+      fullUrl: evidenceReference,
+      resource: registrationResourceInProject(buildCommsConsent(patientFullUrl, preferences.cells, preferences.confirmedVia!, actor, preferences.formDate), projectId),
+      request: { method: "POST", url: "Consent" },
+    };
+  }
   const entries: BundleEntry[] = [{ fullUrl: patientFullUrl, resource: patient, request: { method: "POST", url: "Patient" } }];
+  if (consentEntry) entries.push(consentEntry);
   const partyReferences = new Map<string, string>();
   for (const party of input.responsibleParties) {
     if (party.kind === "self") {

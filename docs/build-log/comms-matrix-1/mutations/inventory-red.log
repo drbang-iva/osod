@@ -1,0 +1,187 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs ../tests/preflight/fhir-read-grant-check.test.ts
+
+TAP version 13
+# Subtest: FHIR read grant scan collects every literal FHIR receiver and requires the search-contract marker for computed searches
+ok 1 - FHIR read grant scan collects every literal FHIR receiver and requires the search-contract marker for computed searches
+  ---
+  duration_ms: 445.249875
+  type: 'test'
+  ...
+# Subtest: FHIR operation scan maps every write interaction to its required Medplum grant
+ok 2 - FHIR operation scan maps every write interaction to its required Medplum grant
+  ---
+  duration_ms: 0.9225
+  type: 'test'
+  ...
+# Subtest: the PR 397 tally create fails grant comparison when its exact profile fence is absent
+ok 3 - the PR 397 tally create fails grant comparison when its exact profile fence is absent
+  ---
+  duration_ms: 0.6595
+  type: 'test'
+  ...
+# Subtest: the exact write ratchet rejects a stale entry instead of silently forgiving it
+ok 4 - the exact write ratchet rejects a stale entry instead of silently forgiving it
+  ---
+  duration_ms: 0.148875
+  type: 'test'
+  ...
+# Subtest: the service-identity write inventory rejects an exact ui/src relocation
+ok 5 - the service-identity write inventory rejects an exact ui/src relocation
+  ---
+  duration_ms: 0.123875
+  type: 'test'
+  ...
+# Subtest: FHIR read grant comparison reports the exact sorted subset gap
+ok 6 - FHIR read grant comparison reports the exact sorted subset gap
+  ---
+  duration_ms: 0.086834
+  type: 'test'
+  ...
+# Subtest: an explicitly reasoned non-FHIR literal call site does not manufacture a grant demand
+ok 7 - an explicitly reasoned non-FHIR literal call site does not manufacture a grant demand
+  ---
+  duration_ms: 0.271667
+  type: 'test'
+  ...
+# Subtest: live FHIR read grant check covers all four chart resources through compiled role policies
+not ok 8 - live FHIR read grant check covers all four chart resources through compiled role policies
+  ---
+  duration_ms: 1100.252625
+  type: 'test'
+  location: 'tests/preflight/fhir-read-grant-check.test.ts:1:7617'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+
+      [
+        'Account',
+        'AdverseEvent',
+        'AllergyIntolerance',
+        'Basic',
+    ...
+        'Condition',
+    +   'Consent',
+        'Coverage',
+        'Device',
+        'DeviceRequest',
+        'DiagnosticReport',
+        'DocumentReference',
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'Account'
+    1: 'AdverseEvent'
+    2: 'AllergyIntolerance'
+    3: 'Basic'
+    4: 'BodyStructure'
+    5: 'CarePlan'
+    6: 'CareTeam'
+    7: 'ChargeItem'
+    8: 'Communication'
+    9: 'Condition'
+    10: 'Coverage'
+    11: 'Device'
+    12: 'DeviceRequest'
+    13: 'DiagnosticReport'
+    14: 'DocumentReference'
+    15: 'Encounter'
+    16: 'EpisodeOfCare'
+    17: 'Goal'
+    18: 'Media'
+    19: 'MedicationAdministration'
+    20: 'MedicationRequest'
+    21: 'MedicationStatement'
+    22: 'Observation'
+    23: 'Patient'
+    24: 'Procedure'
+    25: 'Provenance'
+    26: 'QuestionnaireResponse'
+    27: 'RelatedPerson'
+    28: 'ServiceRequest'
+  actual:
+    0: 'Account'
+    1: 'AdverseEvent'
+    2: 'AllergyIntolerance'
+    3: 'Basic'
+    4: 'BodyStructure'
+    5: 'CarePlan'
+    6: 'CareTeam'
+    7: 'ChargeItem'
+    8: 'Communication'
+    9: 'Condition'
+    10: 'Consent'
+    11: 'Coverage'
+    12: 'Device'
+    13: 'DeviceRequest'
+    14: 'DiagnosticReport'
+    15: 'DocumentReference'
+    16: 'Encounter'
+    17: 'EpisodeOfCare'
+    18: 'Goal'
+    19: 'Media'
+    20: 'MedicationAdministration'
+    21: 'MedicationRequest'
+    22: 'MedicationStatement'
+    23: 'Observation'
+    24: 'Patient'
+    25: 'Procedure'
+    26: 'Provenance'
+    27: 'QuestionnaireResponse'
+    28: 'RelatedPerson'
+    29: 'ServiceRequest'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (tests/preflight/fhir-read-grant-check.test.ts:311:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: FHIR read grant CLI passes only with full coverage and always prints its limits
+ok 9 - FHIR read grant CLI passes only with full coverage and always prints its limits
+  ---
+  duration_ms: 1694.686042
+  type: 'test'
+  ...
+# Subtest: an ungranted FHIR create in mcp source makes the CLI fail with its interaction and resource type
+ok 10 - an ungranted FHIR create in mcp source makes the CLI fail with its interaction and resource type
+  ---
+  duration_ms: 1578.524666
+  type: 'test'
+  ...
+# Subtest: an ungranted FHIR create in ui tsx makes the CLI fail with its interaction and resource type
+ok 11 - an ungranted FHIR create in ui tsx makes the CLI fail with its interaction and resource type
+  ---
+  duration_ms: 1535.659167
+  type: 'test'
+  ...
+# Subtest: serviceFhir read of an ungranted non-plumbing resource makes the CLI fail with its name
+ok 12 - serviceFhir read of an ungranted non-plumbing resource makes the CLI fail with its name
+  ---
+  duration_ms: 1583.31075
+  type: 'test'
+  ...
+# Subtest: an ungranted FHIR read in ui/src makes the CLI fail with its name
+ok 13 - an ungranted FHIR read in ui/src makes the CLI fail with its name
+  ---
+  duration_ms: 1554.311125
+  type: 'test'
+  ...
+# Subtest: a marked computed search helper carries literal resource types across source files
+ok 14 - a marked computed search helper carries literal resource types across source files
+  ---
+  duration_ms: 0.655625
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9742.701958

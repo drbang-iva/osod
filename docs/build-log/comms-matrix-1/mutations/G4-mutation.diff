@@ -1,0 +1,10 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -27,7 +27,6 @@
+ export const COMMS_PREFERENCE_CHANNELS = ["sms", "call", "email", "mail"] as const;
+ export type CommsPreferenceChannel = typeof COMMS_PREFERENCE_CHANNELS[number];
+ export const PURPOSE_BY_CAMPAIGN_TYPE = {
+-  "appointment-reminder": "appointment",
+   "clinical-education": "education",
+ } as const satisfies Record<string, CommsPurpose>;
+ export const MATRIX_EXEMPT_CAMPAIGN_TYPES = ["staff-initiated"] as const;

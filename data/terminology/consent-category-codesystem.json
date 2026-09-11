@@ -1,0 +1,21 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "consent-category",
+  "url": "https://odos2020.com/fhir/CodeSystem/consent-category",
+  "version": "2026-09-10",
+  "name": "ODOSConsentCategory",
+  "title": "ODOS Consent Category",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-09-11",
+  "publisher": "ODOS",
+  "description": "Local communication preference and evidence vocabulary.",
+  "caseSensitive": true,
+  "content": "complete",
+  "concept": [
+    {
+      "code": "comms-consent",
+      "display": "Comms consent"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/educationSequenceWorker.test.ts
+
+TAP version 13
+# Subtest: late acceptance after acknowledgement settles the row without rewriting acknowledgement or resending
+ok 1 - late acceptance after acknowledgement settles the row without rewriting acknowledgement or resending
+  ---
+  duration_ms: 15.88625
+  type: 'test'
+  ...
+# Subtest: worker groups due rows by patient so downtime never bursts
+ok 2 - worker groups due rows by patient so downtime never bursts
+  ---
+  duration_ms: 5.985875
+  type: 'test'
+  ...
+# Subtest: worker starts immediately, unrefs its timer and contains sweep errors
+ok 3 - worker starts immediately, unrefs its timer and contains sweep errors
+  ---
+  duration_ms: 0.34
+  type: 'test'
+  ...
+# Subtest: preflight opt-out holds the due row and future same-channel rows while leaving email untouched
+ok 4 - preflight opt-out holds the due row and future same-channel rows while leaving email untouched
+  ---
+  duration_ms: 1.82325
+  type: 'test'
+  ...
+# Subtest: final opt-out suppression holds the claimed row without recording delivery or retrying
+ok 5 - final opt-out suppression holds the claimed row without recording delivery or retrying
+  ---
+  duration_ms: 2.174334
+  type: 'test'
+  ...
+# Subtest: print rows become staff tasks without preflight or electronic admission
+ok 6 - print rows become staff tasks without preflight or electronic admission
+  ---
+  duration_ms: 0.98725
+  type: 'test'
+  ...
+# Subtest: fire-time visit holds a due row and a reviewed encounter does not hold it again
+ok 7 - fire-time visit holds a due row and a reviewed encounter does not hold it again
+  ---
+  duration_ms: 2.522625
+  type: 'test'
+  ...
+# Subtest: lost outcome write reconciles recorded acceptance without another provider call
+ok 8 - lost outcome write reconciles recorded acceptance without another provider call
+  ---
+  duration_ms: 2.53025
+  type: 'test'
+  ...
+# Subtest: clinician skip anchors successor pacing without counting as acceptance
+ok 9 - clinician skip anchors successor pacing without counting as acceptance
+  ---
+  duration_ms: 2.693917
+  type: 'test'
+  ...
+# Subtest: malformed mid-page enrollment does not stall other patients
+ok 10 - malformed mid-page enrollment does not stall other patients
+  ---
+  duration_ms: 3.256542
+  type: 'test'
+  ...
+# Subtest: stop after worker preflight read wins with no provider call
+ok 11 - stop after worker preflight read wins with no provider call
+  ---
+  duration_ms: 1.829125
+  type: 'test'
+  ...
+# Subtest: expired work is held without attempt and is not released by an unrelated lifecycle pass
+ok 12 - expired work is held without attempt and is not released by an unrelated lifecycle pass
+  ---
+  duration_ms: 2.533625
+  type: 'test'
+  ...
+# Subtest: held patient-opt-out rows never dispatch
+ok 13 - held patient-opt-out rows never dispatch
+  ---
+  duration_ms: 0.7945
+  type: 'test'
+  ...
+# Subtest: held patient-seen rows never dispatch
+ok 14 - held patient-seen rows never dispatch
+  ---
+  duration_ms: 0.8445
+  type: 'test'
+  ...
+# Subtest: held content-unavailable rows never dispatch
+ok 15 - held content-unavailable rows never dispatch
+  ---
+  duration_ms: 0.71075
+  type: 'test'
+  ...
+# Subtest: held no-recipient-channel rows never dispatch
+ok 16 - held no-recipient-channel rows never dispatch
+  ---
+  duration_ms: 0.724375
+  type: 'test'
+  ...
+# Subtest: held needs-acknowledgement rows never dispatch
+ok 17 - held needs-acknowledgement rows never dispatch
+  ---
+  duration_ms: 0.926667
+  type: 'test'
+  ...
+# Subtest: cancelled rows never dispatch
+ok 18 - cancelled rows never dispatch
+  ---
+  duration_ms: 1.044
+  type: 'test'
+  ...
+# Subtest: claim before stop records possibly delivered attempt without any successor send
+ok 19 - claim before stop records possibly delivered attempt without any successor send
+  ---
+  duration_ms: 2.015291
+  type: 'test'
+  ...
+# Subtest: later page is visited and foreign practice resources are excluded even if returned
+ok 20 - later page is visited and foreign practice resources are excluded even if returned
+  ---
+  duration_ms: 2.906625
+  type: 'test'
+  ...
+# Subtest: recorded acceptance enforces same-day spacing across sweeps
+ok 21 - recorded acceptance enforces same-day spacing across sweeps
+  ---
+  duration_ms: 1.917417
+  type: 'test'
+  ...
+# Subtest: unknown provider outcome holds the attempt and never invokes another send
+ok 22 - unknown provider outcome holds the attempt and never invokes another send
+  ---
+  duration_ms: 2.128958
+  type: 'test'
+  ...
+# Subtest: worker and scheduling storage contain no transition import or invocation
+ok 23 - worker and scheduling storage contain no transition import or invocation
+  ---
+  duration_ms: 17.635084
+  type: 'test'
+  ...
+# Subtest: real final gate deferral creates one successor across repeated sweeps and restart
+ok 24 - real final gate deferral creates one successor across repeated sweeps and restart
+  ---
+  duration_ms: 231.862917
+  type: 'test'
+  ...
+# Subtest: G7 preference withholding holds the claimed row without recording delivery or retrying
+ok 25 - G7 preference withholding holds the claimed row without recording delivery or retrying
+  ---
+  duration_ms: 1.784792
+  type: 'test'
+  ...
+# Subtest: G7 preference cascade: preflight opt-out holds the due row and future same-channel rows while leaving email untouched
+ok 26 - G7 preference cascade: preflight opt-out holds the due row and future same-channel rows while leaving email untouched
+  ---
+  duration_ms: 1.232875
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 880.724833

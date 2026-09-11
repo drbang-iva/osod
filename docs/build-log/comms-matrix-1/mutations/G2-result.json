@@ -1,0 +1,1 @@
+{"guard": "G2", "command": "npm --prefix mcp test -- tests/commsEvidence.test.ts", "red_exit": 1, "green_exit": 0}

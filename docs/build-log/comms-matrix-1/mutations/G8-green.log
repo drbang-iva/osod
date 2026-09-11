@@ -1,0 +1,38 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/educationEnrollment.test.ts
+
+TAP version 13
+# Subtest: EducationEnrollment in-memory persistence records stage 1 truth and refuses the same active journey across versions
+ok 1 - EducationEnrollment in-memory persistence records stage 1 truth and refuses the same active journey across versions
+  ---
+  duration_ms: 1.474875
+  type: 'test'
+  ...
+# Subtest: EducationEnrollment FHIR Basic round-trip preserves exact sends, outcomes, and repeated stage history
+ok 2 - EducationEnrollment FHIR Basic round-trip preserves exact sends, outcomes, and repeated stage history
+  ---
+  duration_ms: 1.535583
+  type: 'test'
+  ...
+# Subtest: EducationEnrollment FHIR terminal transition preserves prior truth and removes only the active identifier with If-Match
+ok 3 - EducationEnrollment FHIR terminal transition preserves prior truth and removes only the active identifier with If-Match
+  ---
+  duration_ms: 1.1695
+  type: 'test'
+  ...
+# Subtest: G8 preference-withheld survives FHIR enrollment round-trip
+ok 4 - G8 preference-withheld survives FHIR enrollment round-trip
+  ---
+  duration_ms: 0.280208
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 182.849334

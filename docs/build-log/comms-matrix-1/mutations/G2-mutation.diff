@@ -1,0 +1,14 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -116,9 +116,9 @@
+   }));
+   readCommsPreferenceCells({ resourceType: "Patient", extension: extensions });
+   const next = { ...patient, extension: [
+-    ...(patient.extension ?? []).filter(e => e.url !== ODOS_COMMS_PREFERENCE_URL || !cells.some(cell =>
++    ...(patient.extension ?? []).filter(e => !e.url.startsWith("https://odos2020.com/fhir/StructureDefinition/odos-comms-") || (e.url === ODOS_COMMS_PREFERENCE_URL && !cells.some(cell =>
+       e.extension?.some(p => p.url === "purpose" && p.valueCode === cell.purpose)
+-      && e.extension?.some(p => p.url === "channel" && p.valueCode === cell.channel))),
++      && e.extension?.some(p => p.url === "channel" && p.valueCode === cell.channel)))),
+     ...extensions,
+   ] };
+   return next;

@@ -1,0 +1,98 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs ../tests/preflight/fhir-read-grant-check.test.ts
+
+TAP version 13
+# Subtest: FHIR read grant scan collects every literal FHIR receiver and requires the search-contract marker for computed searches
+ok 1 - FHIR read grant scan collects every literal FHIR receiver and requires the search-contract marker for computed searches
+  ---
+  duration_ms: 400.121084
+  type: 'test'
+  ...
+# Subtest: FHIR operation scan maps every write interaction to its required Medplum grant
+ok 2 - FHIR operation scan maps every write interaction to its required Medplum grant
+  ---
+  duration_ms: 1.714084
+  type: 'test'
+  ...
+# Subtest: the PR 397 tally create fails grant comparison when its exact profile fence is absent
+ok 3 - the PR 397 tally create fails grant comparison when its exact profile fence is absent
+  ---
+  duration_ms: 1.015041
+  type: 'test'
+  ...
+# Subtest: the exact write ratchet rejects a stale entry instead of silently forgiving it
+ok 4 - the exact write ratchet rejects a stale entry instead of silently forgiving it
+  ---
+  duration_ms: 0.311
+  type: 'test'
+  ...
+# Subtest: the service-identity write inventory rejects an exact ui/src relocation
+ok 5 - the service-identity write inventory rejects an exact ui/src relocation
+  ---
+  duration_ms: 0.201375
+  type: 'test'
+  ...
+# Subtest: FHIR read grant comparison reports the exact sorted subset gap
+ok 6 - FHIR read grant comparison reports the exact sorted subset gap
+  ---
+  duration_ms: 0.114541
+  type: 'test'
+  ...
+# Subtest: an explicitly reasoned non-FHIR literal call site does not manufacture a grant demand
+ok 7 - an explicitly reasoned non-FHIR literal call site does not manufacture a grant demand
+  ---
+  duration_ms: 0.520334
+  type: 'test'
+  ...
+# Subtest: live FHIR read grant check covers all four chart resources through compiled role policies
+ok 8 - live FHIR read grant check covers all four chart resources through compiled role policies
+  ---
+  duration_ms: 961.027208
+  type: 'test'
+  ...
+# Subtest: FHIR read grant CLI passes only with full coverage and always prints its limits
+ok 9 - FHIR read grant CLI passes only with full coverage and always prints its limits
+  ---
+  duration_ms: 1526.67325
+  type: 'test'
+  ...
+# Subtest: an ungranted FHIR create in mcp source makes the CLI fail with its interaction and resource type
+ok 10 - an ungranted FHIR create in mcp source makes the CLI fail with its interaction and resource type
+  ---
+  duration_ms: 1530.719083
+  type: 'test'
+  ...
+# Subtest: an ungranted FHIR create in ui tsx makes the CLI fail with its interaction and resource type
+ok 11 - an ungranted FHIR create in ui tsx makes the CLI fail with its interaction and resource type
+  ---
+  duration_ms: 1507.554833
+  type: 'test'
+  ...
+# Subtest: serviceFhir read of an ungranted non-plumbing resource makes the CLI fail with its name
+ok 12 - serviceFhir read of an ungranted non-plumbing resource makes the CLI fail with its name
+  ---
+  duration_ms: 1546.919875
+  type: 'test'
+  ...
+# Subtest: an ungranted FHIR read in ui/src makes the CLI fail with its name
+ok 13 - an ungranted FHIR read in ui/src makes the CLI fail with its name
+  ---
+  duration_ms: 1484.849833
+  type: 'test'
+  ...
+# Subtest: a marked computed search helper carries literal resource types across source files
+ok 14 - a marked computed search helper carries literal resource types across source files
+  ---
+  duration_ms: 0.8535
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9203.226042

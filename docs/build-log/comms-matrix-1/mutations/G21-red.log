@@ -1,0 +1,38 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs --test-name-pattern=^G21 preference PUT optimistic conflict tests/commsPreferencesRoutes.test.ts
+
+TAP version 13
+# odos-mcp: patient communications route failed.
+# Subtest: G21 preference PUT optimistic conflict returns 409
+not ok 1 - G21 preference PUT optimistic conflict returns 409
+  ---
+  duration_ms: 29.798083
+  type: 'test'
+  location: 'mcp/tests/commsPreferencesRoutes.test.ts:1:5758'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    502 !== 409
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 409
+  actual: 502
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/commsPreferencesRoutes.test.ts:93:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 520.022917

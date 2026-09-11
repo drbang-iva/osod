@@ -1,0 +1,116 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/commsPreferencesRoutes.test.ts tests/commsEvidence.test.ts
+
+TAP version 13
+# Subtest: preference boundary rejects duplicate, excess, invalid enums, dates, and phone patient keys
+ok 1 - preference boundary rejects duplicate, excess, invalid enums, dates, and phone patient keys
+  ---
+  duration_ms: 3.215042
+  type: 'test'
+  ...
+# Subtest: Consent builder records complete scope, policy and capture; evidence closes only matching active cells
+ok 2 - Consent builder records complete scope, policy and capture; evidence closes only matching active cells
+  ---
+  duration_ms: 0.610625
+  type: 'test'
+  ...
+# Subtest: G2 all twenty cells preserve suppression byte-for-byte; confirmed writes include atomic Consent and provenance
+ok 3 - G2 all twenty cells preserve suppression byte-for-byte; confirmed writes include atomic Consent and provenance
+  ---
+  duration_ms: 1.257583
+  type: 'test'
+  ...
+# Subtest: evidence attachment preserves explicit values and setter metadata without creating default cells
+ok 4 - evidence attachment preserves explicit values and setter metadata without creating default cells
+  ---
+  duration_ms: 0.255625
+  type: 'test'
+  ...
+# Subtest: gap report filters tiers using active evidence and refuses incomplete evidence pages
+ok 5 - gap report filters tiers using active evidence and refuses incomplete evidence pages
+  ---
+  duration_ms: 0.608917
+  type: 'test'
+  ...
+# Subtest: report stops at its row bound and resumes without skipping patients
+ok 6 - report stops at its row bound and resumes without skipping patients
+  ---
+  duration_ms: 28.028583
+  type: 'test'
+  ...
+# Subtest: report stops at 100 Patient pages even when a filter yields no rows
+ok 7 - report stops at 100 Patient pages even when a filter yields no rows
+  ---
+  duration_ms: 42.259959
+  type: 'test'
+  ...
+# Subtest: preference transaction failure preserves status for optimistic race mapping
+ok 8 - preference transaction failure preserves status for optimistic race mapping
+  ---
+  duration_ms: 0.356875
+  type: 'test'
+  ...
+# Subtest: preferences GET returns effective matrix and evidence rows
+ok 9 - preferences GET returns effective matrix and evidence rows
+  ---
+  duration_ms: 21.977
+  type: 'test'
+  ...
+# Subtest: G2 preferences PUT all twenty ON leaves STOP extensions unchanged
+ok 10 - G2 preferences PUT all twenty ON leaves STOP extensions unchanged
+  ---
+  duration_ms: 12.6095
+  type: 'test'
+  ...
+# Subtest: G6 preferences PUT requires actual preferences business action
+ok 11 - G6 preferences PUT requires actual preferences business action
+  ---
+  duration_ms: 2.926292
+  type: 'test'
+  ...
+# Subtest: G6 removing preferences action from staff declaration refuses PUT
+ok 12 - G6 removing preferences action from staff declaration refuses PUT
+  ---
+  duration_ms: 2.408125
+  type: 'test'
+  ...
+# Subtest: G21 preference PUT optimistic conflict returns 409
+ok 13 - G21 preference PUT optimistic conflict returns 409
+  ---
+  duration_ms: 2.407166
+  type: 'test'
+  ...
+# Subtest: evidence POST uses an atomic Patient Consent Provenance transaction and preserves cells
+ok 14 - evidence POST uses an atomic Patient Consent Provenance transaction and preserves cells
+  ---
+  duration_ms: 4.282125
+  type: 'test'
+  ...
+# Subtest: preferences routes reject invalid enums duplicates dates and phone keys
+ok 15 - preferences routes reject invalid enums duplicates dates and phone keys
+  ---
+  duration_ms: 9.285
+  type: 'test'
+  ...
+# Subtest: evidence gaps routes provide JSON and CSV and reject arbitrary URL cursor
+ok 16 - evidence gaps routes provide JSON and CSV and reject arbitrary URL cursor
+  ---
+  duration_ms: 4.177541
+  type: 'test'
+  ...
+# Subtest: CSV evidence report exposes truncation and continuation even with zero rows
+ok 17 - CSV evidence report exposes truncation and continuation even with zero rows
+  ---
+  duration_ms: 92.897958
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 778.028333

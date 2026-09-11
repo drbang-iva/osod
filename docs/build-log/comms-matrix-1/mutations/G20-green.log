@@ -1,0 +1,181 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/patientRegistrationAuthz.test.ts
+
+TAP version 13
+# Subtest: Provider, Staff, and Admin may register a patient
+ok 1 - Provider, Staff, and Admin may register a patient
+  ---
+  duration_ms: 0.582541
+  type: 'test'
+  ...
+# Subtest: no user AccessPolicy authorizes a compartment-less Account create
+ok 2 - no user AccessPolicy authorizes a compartment-less Account create
+  ---
+  duration_ms: 0.21825
+  type: 'test'
+  ...
+# Subtest: provider registers Patient, RelatedPerson, and Account through one service transaction
+ok 3 - provider registers Patient, RelatedPerson, and Account through one service transaction
+  ---
+  duration_ms: 34.966292
+  type: 'test'
+  ...
+# Subtest: staff registers Patient, RelatedPerson, and Account through one service transaction
+ok 4 - staff registers Patient, RelatedPerson, and Account through one service transaction
+  ---
+  duration_ms: 5.265584
+  type: 'test'
+  ...
+# Subtest: admin registers Patient, RelatedPerson, and Account through one service transaction
+ok 5 - admin registers Patient, RelatedPerson, and Account through one service transaction
+  ---
+  duration_ms: 2.885459
+  type: 'test'
+  ...
+# Subtest: registration creates the MRN reservation and identity resources in the caller project
+ok 6 - registration creates the MRN reservation and identity resources in the caller project
+  ---
+  duration_ms: 2.30825
+  type: 'test'
+  ...
+# Subtest: a caller in project A never submits registration writes to service project B
+ok 7 - a caller in project A never submits registration writes to service project B
+  ---
+  duration_ms: 3.098166
+  type: 'test'
+  ...
+# odos-mcp: patient registration failed: Error: Registration resource belongs to Project/project-b, not Project/practice-1.
+#     at registrationResourceInProject (mcp/src/clinic/patient-registration-endpoint.ts:292:11)
+#     at buildPatientIdentityTransaction (mcp/src/clinic/patient-registration-endpoint.ts:266:19)
+#     at registerPatientFromDemographics (mcp/src/clinic/patient-registration-endpoint.ts:111:19)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+#     at async handlePatientRegistration (mcp/src/clinic/clinic-routes.ts:217:20)
+# Subtest: registration stops when an MRN reservation is returned from another project
+ok 8 - registration stops when an MRN reservation is returned from another project
+  ---
+  duration_ms: 4.082791
+  type: 'test'
+  ...
+# Subtest: registration access grant rejects a Patient outside the caller project
+ok 9 - registration access grant rejects a Patient outside the caller project
+  ---
+  duration_ms: 0.406959
+  type: 'test'
+  ...
+# Subtest: a role without patients.register is refused before any service FHIR call
+ok 10 - a role without patients.register is refused before any service FHIR call
+  ---
+  duration_ms: 0.300583
+  type: 'test'
+  ...
+# odos-mcp: patient registration failed: Error: synthetic transaction failure
+#     at RegistrationFhir.executeTransaction (mcp/tests/patientRegistrationAuthz.test.ts:641:37)
+#     at RegistrationFhir.executeTransactionAsActor (mcp/tests/patientRegistrationAuthz.test.ts:694:35)
+#     at registerPatientFromDemographics (mcp/src/clinic/patient-registration-endpoint.ts:114:39)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+#     at async handlePatientRegistration (mcp/src/clinic/clinic-routes.ts:217:20)
+# Subtest: a failed identity transaction leaves no Patient and marks its MRN reservation entered-in-error
+ok 11 - a failed identity transaction leaves no Patient and marks its MRN reservation entered-in-error
+  ---
+  duration_ms: 3.3975
+  type: 'test'
+  ...
+# Subtest: a committed identity transaction with a dropped response is reconciled and preserved
+ok 12 - a committed identity transaction with a dropped response is reconciled and preserved
+  ---
+  duration_ms: 2.522416
+  type: 'test'
+  ...
+# Subtest: a membership version conflict is refetched and retried before registration returns
+ok 13 - a membership version conflict is refetched and retried before registration returns
+  ---
+  duration_ms: 5.261708
+  type: 'test'
+  ...
+# Subtest: registration grants access when the caller membership omits active
+ok 14 - registration grants access when the caller membership omits active
+  ---
+  duration_ms: 2.778166
+  type: 'test'
+  ...
+# Subtest: inactive memberships do not consume the registration membership search count
+ok 15 - inactive memberships do not consume the registration membership search count
+  ---
+  duration_ms: 1.840833
+  type: 'test'
+  ...
+# Subtest: registration appends every named compartment parameter on a stacked composite membership
+ok 16 - registration appends every named compartment parameter on a stacked composite membership
+  ---
+  duration_ms: 7.341
+  type: 'test'
+  ...
+# Subtest: persistent grant failure preserves the active registration and returns asserted repair guidance
+ok 17 - persistent grant failure preserves the active registration and returns asserted repair guidance
+  ---
+  duration_ms: 2.28575
+  type: 'test'
+  ...
+# Subtest: an exact pre-existing Patient is returned as a duplicate and never receives a registration grant
+ok 18 - an exact pre-existing Patient is returned as a duplicate and never receives a registration grant
+  ---
+  duration_ms: 1.516458
+  type: 'test'
+  ...
+# Subtest: an exact duplicate on a later project-scoped search page still requires confirmation
+ok 19 - an exact duplicate on a later project-scoped search page still requires confirmation
+  ---
+  duration_ms: 1.178333
+  type: 'test'
+  ...
+# odos-mcp: patient registration failed: Error: Project-scoped duplicate search returned a Patient outside the caller project.
+#     at findExactDuplicates (mcp/src/clinic/patient-registration-endpoint.ts:326:11)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+#     at async registerPatientFromDemographics (mcp/src/clinic/patient-registration-endpoint.ts:105:22)
+#     at async handlePatientRegistration (mcp/src/clinic/clinic-routes.ts:217:20)
+# Subtest: duplicate detection never returns a Patient owned by another project
+ok 20 - duplicate detection never returns a Patient owned by another project
+  ---
+  duration_ms: 1.233917
+  type: 'test'
+  ...
+# Subtest: confirmDuplicate creates a distinct server-owned Patient after the duplicate warning
+ok 21 - confirmDuplicate creates a distinct server-owned Patient after the duplicate warning
+  ---
+  duration_ms: 1.150625
+  type: 'test'
+  ...
+# Subtest: a caller-supplied Patient id is rejected before registration FHIR calls
+ok 22 - a caller-supplied Patient id is rejected before registration FHIR calls
+  ---
+  duration_ms: 1.095292
+  type: 'test'
+  ...
+# Subtest: authoritative registration validation rejects form-invalid input before service FHIR
+ok 23 - authoritative registration validation rejects form-invalid input before service FHIR
+  ---
+  duration_ms: 4.144084
+  type: 'test'
+  ...
+# Subtest: G15 registration includes explicit communication cells attributed to registering staff
+ok 24 - G15 registration includes explicit communication cells attributed to registering staff
+  ---
+  duration_ms: 2.326083
+  type: 'test'
+  ...
+# Subtest: G20 registration without effective preference permission creates nothing
+ok 25 - G20 registration without effective preference permission creates nothing
+  ---
+  duration_ms: 0.1245
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 374.326458

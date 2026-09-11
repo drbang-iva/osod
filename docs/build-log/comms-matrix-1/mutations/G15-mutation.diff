@@ -1,0 +1,13 @@
+--- mcp/src/clinic/patient-registration-endpoint.ts
++++ mcp/src/clinic/patient-registration-endpoint.ts
+@@ -238,9 +238,7 @@
+     const preferences = input.communicationPreferences;
+     const actor = { actorReference: preferencePractitioner!, actorRole: "staff" as const, recordedAt: recordedAt!, surface: "staff-registration" as const };
+     const evidenceReference = preferences.confirmedVia ? `urn:uuid:${randomUUID()}` : undefined;
+-    patient = replaceCommsPreferenceCells(patient, preferences.cells.map(cell => ({ ...cell, ...(evidenceReference ? { evidence: { reference: evidenceReference } } : {}) })), {
+-      setBy: { reference: preferencePractitioner! }, surface: "staff-registration", recordedAt: recordedAt!,
+-    });
++    patient = { ...patient };
+     if (evidenceReference) consentEntry = {
+       fullUrl: evidenceReference,
+       resource: registrationResourceInProject(buildCommsConsent(patientFullUrl, preferences.cells, preferences.confirmedVia!, actor, preferences.formDate), projectId),

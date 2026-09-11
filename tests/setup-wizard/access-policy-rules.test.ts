@@ -37,6 +37,7 @@ test("admin canonicalization ignores rule, interaction, and object-key ordering"
     .reverse()
     .map((rule): AccessPolicyResource => Object.fromEntries([
       ...(rule.criteria === undefined ? [] : [["criteria", rule.criteria] as const]),
+      ...(rule.writeConstraint === undefined ? [] : [["writeConstraint", rule.writeConstraint] as const]),
       ["interaction", [...(rule.interaction ?? [])].reverse()],
       ["resourceType", rule.resourceType],
     ]) as AccessPolicyResource);

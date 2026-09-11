@@ -1,0 +1,7 @@
+{
+  "guard": "G9",
+  "command": "node --import tsx --test '--test-name-pattern=isolated evidence HTTP route' mcp/tests/commsConsentLive.test.ts",
+  "red_exit": 1,
+  "green_command": "npm --prefix mcp test -- tests/commsConsentLive.test.ts",
+  "green_exit": 0
+}

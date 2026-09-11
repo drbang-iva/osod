@@ -1,0 +1,90 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/commsPreferences.test.ts
+
+TAP version 13
+# Subtest: preference defaults remain implicit and explicit cells retain attribution
+ok 1 - preference defaults remain implicit and explicit cells retain attribution
+  ---
+  duration_ms: 1.02175
+  type: 'test'
+  ...
+# Subtest: malformed and duplicate preference extensions refuse resolution
+ok 2 - malformed and duplicate preference extensions refuse resolution
+  ---
+  duration_ms: 0.210833
+  type: 'test'
+  ...
+# Subtest: G4 and manual campaign types fail closed
+ok 3 - G4 and manual campaign types fail closed
+  ---
+  duration_ms: 10.108208
+  type: 'test'
+  ...
+# Subtest: G16 marketing email is default ON while legacy marketing SMS remains withheld
+not ok 4 - G16 marketing email is default ON while legacy marketing SMS remains withheld
+  ---
+  duration_ms: 1.274959
+  type: 'test'
+  location: 'mcp/tests/commsPreferences.test.ts:1:2144'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + {
+    +   outcome: 'suppressed',
+    +   reason: 'preference-withheld'
+    + }
+    - undefined
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  actual:
+    outcome: 'suppressed'
+    reason: 'preference-withheld'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (mcp/tests/commsPreferences.test.ts:29:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: G17 explicit marketing SMS ON cannot bypass legacy consent
+ok 5 - G17 explicit marketing SMS ON cannot bypass legacy consent
+  ---
+  duration_ms: 0.112333
+  type: 'test'
+  ...
+# Subtest: G18 malformed cell refuses a send
+ok 6 - G18 malformed cell refuses a send
+  ---
+  duration_ms: 0.09725
+  type: 'test'
+  ...
+# Subtest: G10 override is restricted to education email
+ok 7 - G10 override is restricted to education email
+  ---
+  duration_ms: 0.318875
+  type: 'test'
+  ...
+# Subtest: G1 G3 STOP wins over explicit education SMS ON and resolver reports suppression
+ok 8 - G1 G3 STOP wins over explicit education SMS ON and resolver reports suppression
+  ---
+  duration_ms: 0.11925
+  type: 'test'
+  ...
+# Subtest: G11 staff email override cannot bypass email unsubscribe
+ok 9 - G11 staff email override cannot bypass email unsubscribe
+  ---
+  duration_ms: 0.216959
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 8
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 229.694875

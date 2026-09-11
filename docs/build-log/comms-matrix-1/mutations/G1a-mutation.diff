@@ -1,0 +1,26 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -547,6 +547,11 @@
+ ): Promise<{ patient: Patient; now: Date; result?: Exclude<SendResult, { outcome: "sent" }> }> {
+   const now = deps.now?.() ?? new Date();
+   const patient = await readPatient(deps.fhir, request.patientReference);
++  const purpose = communicationPurpose(request.campaignType, request.suppression.consentClass);
++  if (purpose && !effectiveCommsPreferences(patient, deps)[purpose][channel].value
++    && !(request.suppression.staffEducationOverride && channel === "email" && purpose === "education")) {
++    return { patient, now, result: { outcome: "suppressed", reason: "preference-withheld" } };
++  }
+   if (isOptedOut(
+     patient,
+     channel,
+@@ -557,11 +562,6 @@
+     return { patient, now, result: { outcome: "suppressed", reason: "patient-opt-out" } };
+   }
+   if (channel === "sms" && request.suppression.requiresMarketingConsent && !hasRecordedMarketingConsent(patient)) {
+-    return { patient, now, result: { outcome: "suppressed", reason: "preference-withheld" } };
+-  }
+-  const purpose = communicationPurpose(request.campaignType, request.suppression.consentClass);
+-  if (purpose && !effectiveCommsPreferences(patient, deps)[purpose][channel].value
+-    && !(request.suppression.staffEducationOverride && channel === "email" && purpose === "education")) {
+     return { patient, now, result: { outcome: "suppressed", reason: "preference-withheld" } };
+   }
+   if (

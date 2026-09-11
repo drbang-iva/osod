@@ -1,0 +1,10 @@
+--- tests/preflight/fhir-read-grant-check.test.ts
++++ tests/preflight/fhir-read-grant-check.test.ts
+@@ -319,7 +319,6 @@
+     "ChargeItem",
+     "Communication",
+     "Condition",
+-    "Consent",
+     "Coverage",
+     "Device",
+     "DeviceRequest",

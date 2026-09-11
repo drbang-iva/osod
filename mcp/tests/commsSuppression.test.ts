@@ -193,7 +193,7 @@ test("per-number STOP suppresses its sender lane while leaving a different sende
   const request: SendSmsRequest = {
     patientReference: "Patient/synthetic-1",
     body: "Synthetic follow-up",
-    campaignType: "manual",
+    campaignType: "staff-initiated",
     suppression: {},
   };
 
@@ -803,7 +803,7 @@ test("a configured campaign frequency cap suppresses a repeat inside the lookbac
     category: [{
       coding: [{
         system: "https://odos2020.com/fhir/CodeSystem/comms-campaign-type",
-        code: "review-request",
+        code: "staff-initiated",
       }],
     }],
   };
@@ -818,7 +818,7 @@ test("a configured campaign frequency cap suppresses a repeat inside the lookbac
   });
 
   const result = await sendEmail(provider, baseRequest({
-    campaignType: "review-request",
+    campaignType: "staff-initiated",
     messageId: "current-send",
     suppression: { frequencyCapDays: 90 },
   }));
@@ -839,7 +839,7 @@ test("frequency-cap evaluation follows FHIR next links before allowing a send", 
     category: [{
       coding: [{
         system: "https://odos2020.com/fhir/CodeSystem/comms-campaign-type",
-        code: "review-request",
+        code: "staff-initiated",
       }],
     }],
   };
@@ -867,7 +867,7 @@ test("frequency-cap evaluation follows FHIR next links before allowing a send", 
   });
 
   const result = await sendEmail(provider, baseRequest({
-    campaignType: "review-request",
+    campaignType: "staff-initiated",
     messageId: "current-send",
     suppression: { frequencyCapDays: 90 },
   }));
@@ -891,7 +891,7 @@ test("concurrent in-progress claims elect exactly one deterministic frequency-ca
     category: [{
       coding: [{
         system: "https://odos2020.com/fhir/CodeSystem/comms-campaign-type",
-        code: "review-request",
+        code: "staff-initiated",
       }],
     }],
   }));
@@ -902,12 +902,12 @@ test("concurrent in-progress claims elect exactly one deterministic frequency-ca
   });
 
   const winner = await sendEmail(provider, baseRequest({
-    campaignType: "review-request",
+    campaignType: "staff-initiated",
     messageId: "claim-a",
     suppression: { frequencyCapDays: 90 },
   }));
   const loser = await sendEmail(provider, baseRequest({
-    campaignType: "review-request",
+    campaignType: "staff-initiated",
     messageId: "claim-b",
     suppression: { frequencyCapDays: 90 },
   }));

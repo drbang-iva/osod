@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { createSuppressedCommsProvider } from "../src/comms/suppression-gate.js";
+import { buildCommsOptOutExtension, createSuppressedCommsProvider } from "../src/comms/suppression-gate.js";
 import { test } from "node:test";
 import * as api from "../src/comms/comms-api.js";
 
@@ -43,7 +43,7 @@ test("system send keeps enrolling sender, records executor, and reconciles froze
   const f=fixture();
   const result=await (api as any).dispatchEducationAs(f.actor,f.deps,f.patient,f.body);
   assert.equal(result.outcome,"sent");
-  assert.deepEqual(f.requests[0].suppression,{});
+  assert.deepEqual(f.requests[0].suppression,{ consentClass: "transactional" });
   const reservation=f.resources.find(r=>r.resourceType==="Communication");
   assert.equal(reservation.sender.reference,"Practitioner/enroller");
   const provenance=f.resources.find(r=>r.resourceType==="Provenance");
@@ -117,9 +117,13 @@ test("preflight holds missing recipient, unsupported channel, absent consent, an
   assert.deepEqual(await api.prepareEducationSequenceDispatch(f.deps, f.fhir, f.patient, f.body), { kind: "held", reason: "content-unavailable" });
   f.item.channels = ["email"];
   f.item.consentClass = "marketing";
-  assert.deepEqual(await api.prepareEducationSequenceDispatch(f.deps, f.fhir, f.patient, f.body), { kind: "held", reason: "patient-opt-out" });
+  assert.deepEqual(await api.prepareEducationSequenceDispatch(f.deps, f.fhir, f.patient, f.body), { kind: "held", reason: "no-recipient-channel" });
   f.body.channel = "print";
   assert.deepEqual(await api.prepareEducationSequenceDispatch(f.deps, f.fhir, f.patient, f.body), { kind: "held", reason: "needs-acknowledgement" });
+  f.body.channel = "sms";
+  f.item.channels = ["sms"];
+  f.patient.telecom = [{ system: "phone", value: "+15555550100" }];
+  assert.deepEqual(await api.prepareEducationSequenceDispatch(f.deps, f.fhir, f.patient, f.body), { kind: "held", reason: "preference-withheld" });
   assert.equal(f.resources.length, 0);
   assert.equal(f.requests.length, 0);
 });
@@ -166,7 +170,7 @@ test("staff actor reconciles frozen system receipt with original executor and ca
 });
 
 for (const channel of ["email", "sms"] as const) {
-test(`final gate refuses prepared system marketing ${channel} after consent is revoked`, async () => {
+test(`final gate rechecks prepared system marketing ${channel} after consent is revoked`, async () => {
   const f = fixture();
   f.item.consentClass = "marketing";
   f.patient.extension = [{
@@ -196,10 +200,17 @@ test(`final gate refuses prepared system marketing ${channel} after consent is r
   if (preparation.kind !== "ready") throw Error("expected ready");
   f.patient.extension = [];
   const result = await api.dispatchEducationAs(f.actor, f.deps, stalePatient, f.body, { prepared: preparation.prepared });
-  assert.deepEqual(result, { outcome: "suppressed", reason: "patient-opt-out" });
-  assert.equal(f.requests.length, 0);
+  assert.deepEqual(result, channel === "email" ? { outcome: "sent", providerMessageId: "receipt-1" } : { outcome: "suppressed", reason: "preference-withheld" });
+  assert.equal(f.requests.length, channel === "email" ? 1 : 0);
   const evidence = await api.readEducationDispatchEvidence(f.fhir, f.body, f.actor.onBehalfOf);
   assert.deepEqual(evidence?.outcome, result);
+  if (channel === "email") {
+    f.patient.extension = [buildCommsOptOutExtension("email")];
+    f.requests.length = 0;
+    const blocked = await api.dispatchEducationAs(f.actor, f.deps, f.patient, { ...f.body, idempotencyKey: "sequence-email-opt-out" });
+    assert.deepEqual(blocked, { outcome: "suppressed", reason: "patient-opt-out" });
+    assert.equal(f.requests.length, 0);
+  }
   f.fhir.read = async () => { throw Error("frozen reconciliation must not recheck consent"); };
   assert.deepEqual(await api.dispatchEducationAs(f.actor, f.deps, undefined, f.body, { reconcileOnly: true }), result);
 });
@@ -222,7 +233,7 @@ test("recorded system marketing receipt reconciles after consent and catalog are
   f.deps.dispatch.getAdapterForRole = () => provider;
   const result = await api.dispatchEducationAs(f.actor, f.deps, f.patient, f.body);
   assert.equal(result.outcome, "sent");
-  assert.deepEqual(f.requests[0].suppression, { requiresMarketingConsent: true });
+  assert.deepEqual(f.requests[0].suppression, { requiresMarketingConsent: true, consentClass: "marketing" });
   f.patient.extension = [];
   f.deps.educationCatalog.get = () => { throw Error("withdrawn catalog"); };
   f.fhir.read = async () => { throw Error("mutable patient unavailable"); };
@@ -238,4 +249,18 @@ test("system actor cannot request a chart update or produce chart metadata", asy
   assert.equal(f.resources.length, 0);
   const result = await api.dispatchEducationAs(f.actor, f.deps, f.patient, f.body);
   assert.equal("chartUpdate" in result, false);
+});
+
+test("staff marketing email follows default ON but email opt-out still suppresses", async () => {
+  const f = fixture();
+  f.item.consentClass = "marketing";
+  const provider = createSuppressedCommsProvider(f.provider, { fhir: f.fhir, practiceTimeZone: "UTC", now: () => new Date("2026-09-10T15:00:00Z") });
+  f.deps.dispatch.getAdapterForRole = () => provider;
+  const actor: any = { kind: "staff", staff: { staffReference: "Practitioner/staff", fhir: f.fhir } };
+  assert.deepEqual(await api.dispatchEducationAs(actor, f.deps, f.patient, f.body), { outcome: "sent", providerMessageId: "receipt-1" });
+  assert.equal(f.requests.length, 1);
+  f.patient.extension = [buildCommsOptOutExtension("email")];
+  f.requests.length = 0;
+  assert.deepEqual(await api.dispatchEducationAs(actor, f.deps, f.patient, { ...f.body, idempotencyKey: "staff-email-opt-out" }), { outcome: "suppressed", reason: "patient-opt-out" });
+  assert.equal(f.requests.length, 0);
 });

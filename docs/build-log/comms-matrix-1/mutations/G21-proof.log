@@ -1,0 +1,3 @@
+58:    statusRemoved: Number.parseInt(failed.response?.status ?? "", 10),
+
+rg exit=0; transaction error no longer carries status

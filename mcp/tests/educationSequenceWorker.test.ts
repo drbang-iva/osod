@@ -242,3 +242,53 @@ test("real final gate deferral creates one successor across repeated sweeps and 
     assert.deepEqual(e.immediateSends[0], original);
     assert.equal(providerCalls.length, 0);
 });
+
+test("G7 preference withholding holds the claimed row without recording delivery or retrying", async () => {
+    const f = await fixture(["one"]);
+    editRows(f, row => { if (row.stepIndex === 1) row.notBefore = "2026-09-12T14:00:00.000Z"; });
+    const id = [...f.data.keys()][0];
+    const before = (await f.store.read(id))!;
+    assert.equal(before.scheduledSends![0].disposition, "scheduled");
+    let gateCalls = 0;
+    f.deps.execute = async (enrollment, row) => {
+        assert.equal(enrollment.immediateSends[row.attempts.at(-1)!.sendIndex].state, "in-flight");
+        gateCalls++;
+        return { outcome: "suppressed", reason: "preference-withheld" };
+    };
+    await runOnce(f.deps);
+    await runOnce(f.deps);
+    const e = (await f.store.read(id))!;
+    const row = e.scheduledSends![0];
+    assert.equal(row.disposition, "held");
+    assert.equal(row.holdReason, "preference-withheld");
+    assert.equal(row.events.at(-1)?.reason, "preference-withheld");
+    assert.equal(row.attempts.length, 1);
+    assert.equal(row.attempts[0].acceptedAt, undefined);
+    assert.equal(e.immediateSends.length, 1);
+    assert.equal(e.immediateSends[0].state, "resolved");
+    assert.deepEqual(e.immediateSends[0].outcome, { outcome: "suppressed", reason: "preference-withheld" });
+    assert.equal(gateCalls, 1);
+    assert.equal(f.calls.length, 0);
+});
+test("G7 preference cascade: preflight opt-out holds the due row and future same-channel rows while leaving email untouched", async () => {
+    const f = await fixture(["one"], ["sms", "sms", "email"]);
+    editRows(f, row => { if (row.stepIndex > 0) row.notBefore = "2026-09-12T14:00:00.000Z"; });
+    const id = [...f.data.keys()][0];
+    const before = (await f.store.read(id))!;
+    assert.equal(before.scheduledSends!.length, 3);
+    assert.ok(before.scheduledSends!.every(row => row.disposition === "scheduled"));
+    const prepared: string[] = [];
+    f.deps.prepare = async (_enrollment, row) => { prepared.push(row.id); return { kind: "held", reason: "preference-withheld" }; };
+    await runOnce(f.deps);
+    const e = (await f.store.read(id))!;
+    assert.deepEqual(prepared, [before.scheduledSends![0].id]);
+    for (const row of e.scheduledSends!.slice(0, 2)) {
+        assert.equal(row.disposition, "held");
+        assert.equal(row.holdReason, "preference-withheld");
+        assert.equal(row.attempts.length, 0);
+        assert.equal(row.events.at(-1)?.reason, "preference-withheld");
+    }
+    assert.deepEqual(e.scheduledSends![2], before.scheduledSends![2]);
+    assert.equal(e.immediateSends.length, 0);
+    assert.equal(f.calls.length, 0);
+});

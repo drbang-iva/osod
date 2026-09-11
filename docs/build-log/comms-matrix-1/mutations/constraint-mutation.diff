@@ -1,0 +1,10 @@
+--- tests/setup-wizard/access-policy-rules.test.ts
++++ tests/setup-wizard/access-policy-rules.test.ts
+@@ -37,7 +37,6 @@
+     .reverse()
+     .map((rule): AccessPolicyResource => Object.fromEntries([
+       ...(rule.criteria === undefined ? [] : [["criteria", rule.criteria] as const]),
+-      ...(rule.writeConstraint === undefined ? [] : [["writeConstraint", rule.writeConstraint] as const]),
+       ["interaction", [...(rule.interaction ?? [])].reverse()],
+       ["resourceType", rule.resourceType],
+     ]) as AccessPolicyResource);

@@ -56,6 +56,7 @@ export const BUSINESS_ACTIONS = [
   "communications.send",
   "communications.call",
   "communications.optout.manage",
+  "communications.preferences.manage",
   "patient.inactivate",
   "patient.merge",
 ] as const;
@@ -571,6 +572,25 @@ const OFFICE_CHANNEL_RESOURCE_RULES: OdosResourceRule[] = [
   },
 ];
 
+const COMMS_CONSENT_IMMUTABLE_FIELDS = [
+  "id", "implicitRules", "language", "text", "contained", "extension", "modifierExtension",
+  "identifier", "scope", "category", "patient", "dateTime", "performer", "organization",
+  "sourceAttachment", "sourceReference", "policy", "policyRule", "verification", "provision",
+  "meta.id", "meta.extension", "meta.source", "meta.profile", "meta.security", "meta.tag",
+];
+
+const PATIENT_COMMS_CONSENT_RULE: OdosResourceRule = {
+  resourceType: "Consent",
+  interactions: ["create", "read", "search", "update"],
+  scope: { kind: "patient-compartment", parameterName: "patient_compartment" },
+  writeConstraint: [{
+    description: "Recorded consent evidence is immutable except for status; server-managed metadata may advance.",
+    expression: `%before.exists() implies (${COMMS_CONSENT_IMMUTABLE_FIELDS.map(
+      (field) => `(${field}.exists() = %before.${field}.exists() and (${field}.empty() or ${field} = %before.${field}))`,
+    ).join(" and ")})`,
+  }],
+};
+
 const PATIENT_COMMUNICATION_COMPARTMENT_RULE: OdosResourceRule = {
   resourceType: "Communication",
   interactions: CREATE_UPDATE_INTERACTIONS,
@@ -928,6 +948,7 @@ export const ROLE_REGISTRY: Record<PracticeRoleId, OdosRoleDeclaration> = {
       "communications.content.read",
       "communications.send",
       "communications.call",
+      "communications.preferences.manage",
     ],
     membershipParameters: [
       {
@@ -963,6 +984,7 @@ export const ROLE_REGISTRY: Record<PracticeRoleId, OdosRoleDeclaration> = {
       ...FINDING_CONFIGURATION_BASIC_READ_RESOURCE_RULES,
       ...OFFICE_CHANNEL_RESOURCE_RULES,
       PATIENT_COMMUNICATION_COMPARTMENT_RULE,
+      PATIENT_COMMS_CONSENT_RULE,
       ...PROTOCOL_MODULE_RESOURCE_RULES,
       ...PROCEDURE_CHARGE_RULE_BASIC_RESOURCE_RULES,
       APPEARANCE_CONFIG_READ_RULE,
@@ -988,6 +1010,7 @@ export const ROLE_REGISTRY: Record<PracticeRoleId, OdosRoleDeclaration> = {
       "communications.content.read",
       "communications.send",
       "communications.call",
+      "communications.preferences.manage",
       "communications.optout.manage",
     ],
     membershipParameters: [
@@ -1015,6 +1038,7 @@ export const ROLE_REGISTRY: Record<PracticeRoleId, OdosRoleDeclaration> = {
       ...PROTOCOL_RUNTIME_RESOURCE_RULES,
       ...OFFICE_CHANNEL_RESOURCE_RULES,
       FRONT_DESK_PATIENT_COMMUNICATION_RULE,
+      PATIENT_COMMS_CONSENT_RULE,
     ],
   },
   admin: {
@@ -1044,6 +1068,7 @@ export const ROLE_REGISTRY: Record<PracticeRoleId, OdosRoleDeclaration> = {
       "communications.content.read",
       "communications.send",
       "communications.call",
+      "communications.preferences.manage",
     ],
     resourceRules: [
       ...PRACTICE_READ_RESOURCE_RULES,
@@ -1063,6 +1088,7 @@ export const ROLE_REGISTRY: Record<PracticeRoleId, OdosRoleDeclaration> = {
       ...PROTOCOL_MODULE_RESOURCE_RULES,
       ...PROCEDURE_CHARGE_RULE_BASIC_RESOURCE_RULES,
       PATIENT_COMMUNICATION_COMPARTMENT_RULE,
+      PATIENT_COMMS_CONSENT_RULE,
       APPEARANCE_CONFIG_READ_RULE,
     ],
   },

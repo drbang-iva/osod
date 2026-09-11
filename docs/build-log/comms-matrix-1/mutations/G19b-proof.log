@@ -1,0 +1,16 @@
+282:        throw error;
+351:          if (!(error instanceof PendingEducationReconciliationError)) throw error;
+469:        throw error;
+610:        throw error;
+1076:    throw error;
+1170:  onPreferenceFailure?: () => void,
+1319:          throw error;
+1320:          onPreferenceFailure?.();
+1545:      throw error;
+1659:    throw error;
+1713:    throw error;
+2327:    throw error;
+2344:    throw error;
+2410:    if (!isFhirConflict(error)) throw error;
+2422:    if (!isFhirConflict(error)) throw error;
+2687:    throw error;

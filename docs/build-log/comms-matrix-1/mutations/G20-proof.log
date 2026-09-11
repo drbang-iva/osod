@@ -1,0 +1,2 @@
+91:    if (false && !staffHasBusinessAction(staff, "communications.preferences.manage")) {
+92:      throw Object.assign(new Error("communications.preferences.manage role required"), { status: 403 });

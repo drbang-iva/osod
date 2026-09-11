@@ -1,0 +1,17 @@
+42:export function communicationPurpose(campaignType: string, consentClass?: "transactional" | "marketing"): CommsPurpose | undefined {
+45:  const purpose = (PURPOSE_BY_CAMPAIGN_TYPE as Record<string, CommsPurpose>)[campaignType];
+77:    if (Object.keys(e).some(k => k.startsWith("value")) || parts.some(p => ![...required, "evidence"].includes(p.url))
+83:      if (part.extension || Object.keys(part).filter(k => k.startsWith("value")).some(k => k !== key)) fail();
+86:    const purpose = value("purpose", "valueCode") as CommsPurpose;
+130:    if (isOptedOut(patient, channel, "", channel === "sms" ? options.smsSenderNumber : undefined, options.stopScope ?? "per-number")) {
+372:  if (patients.length === 0) return { outcome: "no-patient-match", matchedPatients: 0 };
+373:  if (optOutType === "START" && patients.length > 1) {
+374:    return { outcome: "opt-in-refused-shared-number", matchedPatients: patients.length };
+377:    return { outcome: "unchanged", matchedPatients: patients.length };
+403:        const purposes: CommsPurpose[] = ["recalls", "appointment", "product-pickup", "education"];
+426:    matchedPatients: patients.length,
+549:  if (isOptedOut(
+558:  if (channel === "sms" && request.suppression.requiresMarketingConsent && !hasRecordedMarketingConsent(patient)) {
+561:  const purpose = communicationPurpose(request.campaignType, request.suppression.consentClass);
+563:    && !(request.suppression.staffEducationOverride && channel === "email" && purpose === "education")) {
+653:function isOptedOut(

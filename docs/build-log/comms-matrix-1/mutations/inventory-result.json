@@ -1,0 +1,1 @@
+{"guard": "inventory", "command": "npm --prefix mcp test -- ../tests/preflight/fhir-read-grant-check.test.ts", "red_exit": 1, "green_exit": 0}

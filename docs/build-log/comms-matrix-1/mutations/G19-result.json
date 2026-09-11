@@ -1,0 +1,1 @@
+{"guard": "G19", "command": "npm --prefix mcp test -- --test-name-pattern=^G19  tests/commsApi.test.ts", "red_exit": 1, "green_exit": 0}

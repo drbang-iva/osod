@@ -1,0 +1,1 @@
+{"guard": "constraint", "command": "npm --prefix mcp test -- ../tests/setup-wizard/access-policy-rules.test.ts", "red_exit": 1, "green_exit": 0}

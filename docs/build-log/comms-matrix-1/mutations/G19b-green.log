@@ -1,0 +1,21 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs --test-name-pattern=^G19b  tests/commsApi.test.ts
+
+TAP version 13
+# odos-mcp: education email sent; preference update failed.
+# Subtest: G19b sent email survives preference flip failure
+ok 1 - G19b sent email survives preference flip failure
+  ---
+  duration_ms: 24.722375
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 376.70725

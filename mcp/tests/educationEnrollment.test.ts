@@ -4,6 +4,8 @@ import { test } from "node:test";
 import type { Basic, Bundle, Resource } from "@medplum/fhirtypes";
 import {
   EducationEnrollmentDuplicateError,
+  enrollmentResource,
+  parseEnrollment,
   createFhirEducationEnrollmentStore,
   createInMemoryEducationEnrollmentStore,
   type NewEducationEnrollment,
@@ -78,6 +80,8 @@ test("EducationEnrollment in-memory persistence records stage 1 truth and refuse
   await assert.rejects(
     () => store.create(enrollmentInput(2)),
     EducationEnrollmentDuplicateError,
+  enrollmentResource,
+  parseEnrollment,
   );
 });
 
@@ -268,4 +272,14 @@ test("EducationEnrollment FHIR terminal transition preserves prior truth and rem
   assert.equal(ifMatches.length, 5);
   assert.equal(new Set(ifMatches).size, 5);
   assert.ok(ifMatches.every(value => /^W\/"[0-9a-f-]{36}"$/.test(value)));
+});
+
+test("G8 preference-withheld survives FHIR enrollment round-trip", async () => {
+  const store = createInMemoryEducationEnrollmentStore();
+  const created = await store.create(enrollmentInput());
+  await store.claimImmediateSend(created.id, 0);
+  const recorded = await store.recordImmediateSendOutcome(created.id, 0, { outcome: "suppressed", reason: "preference-withheld" });
+  const resource = enrollmentResource(recorded, "synthetic-active");
+  resource.id = created.id;
+  assert.deepEqual(parseEnrollment(resource).immediateSends[0].outcome, { outcome: "suppressed", reason: "preference-withheld" });
 });

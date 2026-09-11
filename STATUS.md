@@ -271,3 +271,5 @@ Companion **private** business repo ([`performance-od`](https://github.com/drban
 ## License
 
 AGPL-3.0 application code. Apache-2.0 dependencies underneath. Derivative works must share source — practitioner-owned, practitioner-shared.
+
+- Communication matrix server slice: suppression-first preferences, consent evidence routes and bounded evidence-gap export implemented on the task branch; independent evaluation and preference screens remain pending.

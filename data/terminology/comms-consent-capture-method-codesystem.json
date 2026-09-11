@@ -1,0 +1,25 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "comms-consent-capture-method",
+  "url": "https://odos2020.com/fhir/CodeSystem/comms-consent-capture-method",
+  "version": "2026-09-10",
+  "name": "ODOSCommsConsentCaptureMethod",
+  "title": "ODOS Comms Consent Capture Method",
+  "status": "active",
+  "experimental": false,
+  "date": "2026-09-11",
+  "publisher": "ODOS",
+  "description": "Local communication preference and evidence vocabulary.",
+  "caseSensitive": true,
+  "content": "complete",
+  "concept": [
+    {
+      "code": "in-person",
+      "display": "In person"
+    },
+    {
+      "code": "paper-form",
+      "display": "Paper form"
+    }
+  ]
+}

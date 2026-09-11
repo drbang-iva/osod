@@ -1,0 +1,264 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "odos-comms-preference",
+  "url": "https://odos2020.com/fhir/StructureDefinition/odos-comms-preference",
+  "version": "2026-09-10",
+  "name": "ODOSCommsPreference",
+  "title": "ODOS Comms Preference",
+  "status": "active",
+  "date": "2026-09-11",
+  "publisher": "ODOS",
+  "description": "ODOS Comms Preference recorded separately from communication suppression.",
+  "fhirVersion": "4.0.1",
+  "kind": "complex-type",
+  "abstract": false,
+  "context": [
+    {
+      "type": "element",
+      "expression": "Patient"
+    }
+  ],
+  "type": "Extension",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Extension",
+        "path": "Extension",
+        "short": "ODOS Comms Preference",
+        "min": 0,
+        "max": "*"
+      },
+      {
+        "id": "Extension.extension",
+        "path": "Extension.extension",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "value",
+              "path": "url"
+            }
+          ],
+          "rules": "closed"
+        },
+        "min": 6,
+        "max": "7"
+      },
+      {
+        "id": "Extension.extension:purpose",
+        "path": "Extension.extension",
+        "sliceName": "purpose",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:purpose.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:purpose.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "purpose"
+      },
+      {
+        "id": "Extension.extension:purpose.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "code"
+          }
+        ]
+      },
+      {
+        "id": "Extension.extension:channel",
+        "path": "Extension.extension",
+        "sliceName": "channel",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:channel.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:channel.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "channel"
+      },
+      {
+        "id": "Extension.extension:channel.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "code"
+          }
+        ]
+      },
+      {
+        "id": "Extension.extension:allowed",
+        "path": "Extension.extension",
+        "sliceName": "allowed",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:allowed.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:allowed.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "allowed"
+      },
+      {
+        "id": "Extension.extension:allowed.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "boolean"
+          }
+        ]
+      },
+      {
+        "id": "Extension.extension:recordedAt",
+        "path": "Extension.extension",
+        "sliceName": "recordedAt",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:recordedAt.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:recordedAt.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "recordedAt"
+      },
+      {
+        "id": "Extension.extension:recordedAt.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "Extension.extension:setBy",
+        "path": "Extension.extension",
+        "sliceName": "setBy",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:setBy.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:setBy.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "setBy"
+      },
+      {
+        "id": "Extension.extension:setBy.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/StructureDefinition/Practitioner",
+              "http://hl7.org/fhir/StructureDefinition/Patient",
+              "http://hl7.org/fhir/StructureDefinition/RelatedPerson"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Extension.extension:surface",
+        "path": "Extension.extension",
+        "sliceName": "surface",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:surface.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:surface.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "surface"
+      },
+      {
+        "id": "Extension.extension:surface.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "code"
+          }
+        ]
+      },
+      {
+        "id": "Extension.extension:evidence",
+        "path": "Extension.extension",
+        "sliceName": "evidence",
+        "min": 0,
+        "max": "1"
+      },
+      {
+        "id": "Extension.extension:evidence.extension",
+        "path": "Extension.extension.extension",
+        "max": "0"
+      },
+      {
+        "id": "Extension.extension:evidence.url",
+        "path": "Extension.extension.url",
+        "fixedUri": "evidence"
+      },
+      {
+        "id": "Extension.extension:evidence.value[x]",
+        "path": "Extension.extension.value[x]",
+        "min": 1,
+        "max": "1",
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/StructureDefinition/Consent"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Extension.url",
+        "path": "Extension.url",
+        "fixedUri": "https://odos2020.com/fhir/StructureDefinition/odos-comms-preference"
+      },
+      {
+        "id": "Extension.value[x]",
+        "path": "Extension.value[x]",
+        "max": "0"
+      }
+    ]
+  }
+}

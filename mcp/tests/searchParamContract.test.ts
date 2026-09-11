@@ -143,7 +143,7 @@ test("contract is frozen from Medplum 5.1.8's published definition bundles", () 
   assert.equal(MEDPLUM_SEARCH_PARAMETER_SOURCE.package, "@medplum/definitions");
   assert.equal(MEDPLUM_SEARCH_PARAMETER_SOURCE.version, "5.1.8");
   assert.equal(MEDPLUM_SEARCH_PARAMETER_SOURCE.files.length, 3);
-  assert.equal(Object.keys(MEDPLUM_5_1_8_SEARCH_PARAMETERS).length, 37);
+  assert.equal(Object.keys(MEDPLUM_5_1_8_SEARCH_PARAMETERS).length, 38);
   assert.deepEqual(FHIR_R4_SEARCH_RESULT_PARAMETERS, ["_summary"]);
 });
 

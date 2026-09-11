@@ -1,0 +1,31 @@
+
+> odos-mcp@0.1.0 test
+> node scripts/run-tests.mjs tests/commsConsentLive.test.ts
+
+TAP version 13
+# Subtest: isolated Medplum enforces Consent grants and immutable evidence
+ok 1 - isolated Medplum enforces Consent grants and immutable evidence
+  ---
+  duration_ms: 4685.8765
+  type: 'test'
+  ...
+# provider: Consent create 201; status update 200; content update 403; removed grant create 403
+# staff: Consent create 201; status update 200; content update 403; removed grant create 403
+# admin: Consent create 201; status update 200; content update 403; removed grant create 403
+# Subtest: isolated evidence HTTP route enforces generated staff Consent grant
+ok 2 - isolated evidence HTTP route enforces generated staff Consent grant
+  ---
+  duration_ms: 342.695125
+  type: 'test'
+  ...
+# evidence HTTP expected 200, actual 200: verified
+# evidence HTTP expected 403, actual 403: verified
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5480.49125

@@ -1,0 +1,15 @@
+--- data/canonical-extensions/registry.json
++++ data/canonical-extensions/registry.json
+@@ -981,12 +981,6 @@
+       "sliceConsumer": "history-1d3"
+     },
+     {
+-      "url": "https://odos2020.com/fhir/StructureDefinition/odos-comms-preference",
+-      "namespace": "communications",
+-      "status": "active",
+-      "sliceConsumer": "comms-matrix"
+-    },
+-    {
+       "url": "https://odos2020.com/fhir/StructureDefinition/odos-comms-consent-scope",
+       "namespace": "communications",
+       "status": "active",

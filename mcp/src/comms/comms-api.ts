@@ -1,3 +1,7 @@
+import { resolvePractitionerReference } from "../authz/practitioner-reference.js";
+import { writeCommsPreferences, parsePreferenceWriteInput, parseConsentEvidenceInput, parseEvidenceGapFilters,
+  attachCommsConsentEvidence, readCommsPreferences, reportCommsEvidenceGaps, evidenceGapCsv } from "./comms-preferences.js";
+import { effectiveCommsPreferences } from "./suppression-gate.js";
 import { isFhirConflict } from "../clinical-graph/fhir-conflict.js";
 import type { Communication, Condition, Encounter, Patient, Provenance, RelatedPerson } from "@medplum/fhirtypes";
 import { randomUUID } from "node:crypto";
@@ -86,6 +90,7 @@ export interface CommsApiRouteDeps {
 }
 
 class CommsApiValidationError extends Error {}
+class CommsPreferencePermissionError extends Error {}
 class CommsApiCapabilityError extends Error {}
 class PendingEducationReconciliationError extends CommsApiCapabilityError {}
 class CommsApiNotFoundError extends Error {}
@@ -98,7 +103,7 @@ class CommsProviderTimeoutError extends Error {}
 
 type CommsApiResult =
   | { status: number; body: unknown }
-  | { status: number; media: { contentType: string; bytes: Uint8Array } };
+  | { status: number; media: { contentType: string; bytes: Uint8Array }; headers?: Record<string, string> };
 
 const MAX_CALL_HISTORY_WINDOW = 1_000;
 const MAX_CONVERSATIONS_PER_PROVIDER = 100;
@@ -121,7 +126,7 @@ interface ListedProviderConversations {
 }
 
 export function registerCommsApiRoutes(
-  app: Pick<Application, "get" | "post">,
+  app: Pick<Application, "get" | "post" | "put">,
   deps: CommsApiRouteDeps,
 ): void {
   app.get("/communications/education/sequence-work", async (req, res) => withStaff(
@@ -526,6 +531,51 @@ export function registerCommsApiRoutes(
     },
   ));
 
+  app.get("/communications/preferences", async (req, res) => withStaff(
+    req, res, deps, "communications.read", "Patient", "communications-preferences-read",
+    patientReferenceForAudit(req), async staff => {
+      const patientReference = requiredPatientReference(queryString(req, "patient"));
+      return { status: 200, body: await preferenceAccess(() => readCommsPreferences(staff.fhir, patientReference)) };
+    },
+  ));
+  app.put("/communications/preferences", async (req, res) => withStaff(
+    req, res, deps, "communications.preferences.manage", "Patient", "communications-preferences-write",
+    patientReferenceFromBody(req.body), async staff => {
+      const now = deps.now?.() ?? new Date().toISOString();
+      const input = validatedPreferenceInput(() => parsePreferenceWriteInput(req.body, now));
+      const actorReference = await preferencePractitioner(staff);
+      await preferenceAccess(() => writeCommsPreferences(staff.fhir, input.patientReference, input.cells, {
+        actorReference, actorRole: staff.actorRole, policyUrl: staff.authorizationPolicyUrl,
+        recordedAt: now, surface: "staff-demographics",
+      }, input));
+      return { status: 200, body: await preferenceAccess(() => readCommsPreferences(staff.fhir, input.patientReference)) };
+    },
+  ));
+  app.post("/communications/consent-evidence", async (req, res) => withStaff(
+    req, res, deps, "communications.preferences.manage", "Consent", "communications-consent-evidence",
+    patientReferenceFromBody(req.body), async staff => {
+      const now = deps.now?.() ?? new Date().toISOString();
+      const input = validatedPreferenceInput(() => parseConsentEvidenceInput(req.body, now));
+      const actorReference = await preferencePractitioner(staff);
+      await preferenceAccess(() => attachCommsConsentEvidence(staff.fhir, input, {
+        actorReference, actorRole: staff.actorRole, policyUrl: staff.authorizationPolicyUrl,
+        recordedAt: now, surface: "staff-demographics",
+      }));
+      return { status: 200, body: await preferenceAccess(() => readCommsPreferences(staff.fhir, input.patientReference)) };
+    },
+  ));
+  app.get("/communications/preferences/evidence-gaps", async (req, res) => withStaff(
+    req, res, deps, "communications.preferences.manage", "Consent", "communications-evidence-gaps", undefined,
+    async staff => {
+      const filters = validatedPreferenceInput(() => parseEvidenceGapFilters(req.query, staff.fhir.baseUrl));
+      const report = await preferenceAccess(() => reportCommsEvidenceGaps(staff.fhir, filters));
+      return filters.format === "csv" ? {
+        status: 200, media: { contentType: "text/csv", bytes: Buffer.from(evidenceGapCsv(report)) },
+        headers: { "X-ODOS-Truncated": String(report.truncated), ...(report.cursor ? { "X-ODOS-Cursor": report.cursor } : {}) },
+      } : { status: 200, body: report };
+    },
+  ));
+
   app.get("/communications/opt-out", async (req, res) => withStaff(
     req,
     res,
@@ -842,7 +892,7 @@ async function validateSequenceAdmission(
     const item = deps.educationCatalog.get(step.content.id, step.content.version);
     if (!item || item.audience !== "patient") throw new CommsApiNotFoundError("Education content not found.");
     if (!item.channels.includes(step.channel)) throw new CommsApiCapabilityError(`Education content is not published for ${step.channel}.`);
-    if (item.consentClass === "marketing" && !hasRecordedMarketingConsent(patient)) throw new CommsApiRefusalError("marketing-consent-absent");
+    if (step.channel === "sms" && item.consentClass === "marketing" && !hasRecordedMarketingConsent(patient)) throw new CommsApiRefusalError("marketing-consent-absent");
     if (deps.chartDispatchLane === "locked_clinical" && step.lane !== "clinical") throw new CommsApiCapabilityError("Education dispatch is locked to the clinical lane for this practice.");
     if (step.recipientReference.startsWith("Patient/")) {
       if (step.recipientReference !== `Patient/${patient.id}`) throw new CommsApiValidationError("Sequence recipient must belong to the enrolled patient.");
@@ -979,7 +1029,7 @@ export interface PreparedEducationSequenceDispatch {
 }
 export type EducationSequencePreparation =
   | { kind: "ready"; prepared: PreparedEducationSequenceDispatch }
-  | { kind: "held"; reason: "content-unavailable" | "no-recipient-channel" | "patient-opt-out" | "needs-acknowledgement" }
+  | { kind: "held"; reason: "content-unavailable" | "no-recipient-channel" | "patient-opt-out" | "preference-withheld" | "needs-acknowledgement" }
   | { kind: "deferred"; notBefore: string };
 
 async function prepareEducationDispatch(
@@ -999,7 +1049,7 @@ async function prepareEducationDispatch(
     throw new CommsApiCapabilityError("Education dispatch is locked to the clinical lane for this practice.");
   }
   await assertEducationClinicalReferences(fhir, body);
-  if (item.consentClass === "marketing" && !hasRecordedMarketingConsent(patient)) {
+  if (body.channel === "sms" && item.consentClass === "marketing" && !hasRecordedMarketingConsent(patient)) {
     throw new CommsApiRefusalError("marketing-consent-absent");
   }
   const recipient = await resolveEducationRecipient(fhir, patient, body);
@@ -1019,7 +1069,7 @@ export async function prepareEducationSequenceDispatch(
     prepared = await prepareEducationDispatch(deps, fhir, patient, body);
   } catch (error) {
     if (error instanceof CommsApiNotFoundError) return { kind: "held", reason: "content-unavailable" };
-    if (error instanceof CommsApiRefusalError) return { kind: "held", reason: "patient-opt-out" };
+    if (error instanceof CommsApiRefusalError) return { kind: "held", reason: error.reason === "marketing-consent-absent" ? "preference-withheld" : "patient-opt-out" };
     if (error instanceof CommsApiCapabilityError || error instanceof CommsApiValidationError) {
       return { kind: "held", reason: /published/.test(error.message) ? "content-unavailable" : "no-recipient-channel" };
     }
@@ -1038,10 +1088,10 @@ export async function prepareEducationSequenceDispatch(
   const result = await provider.preflightSuppression({
     patientReference: body.patientReference, body: url, subject: prepared.item.title,
     campaignType: "clinical-education", campaignId: prepared.campaignId, messageId: body.idempotencyKey,
-    suppression: prepared.item.consentClass === "marketing" ? { requiresMarketingConsent: true } : {},
+    suppression: { consentClass: prepared.item.consentClass, ...(prepared.item.consentClass === "marketing" ? { requiresMarketingConsent: true } : {}) },
   }, body.channel);
   if (result?.outcome === "rescheduled") return { kind: "deferred", notBefore: result.rescheduledAt };
-  if (result?.outcome === "suppressed") return { kind: "held", reason: "patient-opt-out" };
+  if (result?.outcome === "suppressed") return { kind: "held", reason: result.reason === "preference-withheld" ? "preference-withheld" : "patient-opt-out" };
   return { kind: "ready", prepared: structuredClone({ body, ...prepared }) };
 }
 
@@ -1087,16 +1137,17 @@ export async function readEducationDispatchEvidence(fhir: MedplumClient, body: E
   return outcome ? { outcome, providerInvoked: outcome.outcome === "rescheduled" ? false : "unknown", frozen } : undefined;
 }
 
-type EducationDispatchResult = EducationEnrollmentSendOutcome & { chartUpdate?: "conflict" };
+type EducationDispatchResult = EducationEnrollmentSendOutcome & { chartUpdate?: "conflict"; preferenceUpdate?: "failed" };
 
 async function dispatchEducation(
   deps: CommsApiRouteDeps, staff: CommsStaff, patient: Patient, body: EducationDispatchBody,
   options: { reconcileOnly?: boolean; senderReference?: string } = {},
 ): Promise<EducationDispatchResult> {
   let chartConflict = false;
+  let preferenceFailed = false;
   const result = await dispatchEducationInternal({ kind: "staff", staff }, deps, patient, body, options,
-    () => { chartConflict = true; });
-  return result.outcome === "sent" && chartConflict ? { ...result, chartUpdate: "conflict" } : result;
+    () => { chartConflict = true; }, () => { preferenceFailed = true; });
+  return result.outcome === "sent" ? { ...result, ...(chartConflict ? { chartUpdate: "conflict" as const } : {}), ...(preferenceFailed ? { preferenceUpdate: "failed" as const } : {}) } : result;
 }
 
 export async function dispatchEducationAs(
@@ -1116,6 +1167,7 @@ async function dispatchEducationInternal(
   body: EducationDispatchBody,
   options: { reconcileOnly?: boolean; senderReference?: string; prepared?: PreparedEducationSequenceDispatch },
   onRecipientConflict?: () => void,
+  onPreferenceFailure?: () => void,
 ): Promise<EducationEnrollmentSendOutcome> {
   if (actor.kind === "system" && "quietHoursExemption" in actor) {
     throw new CommsApiRefusalError("system actor cannot carry a quiet-hours exemption");
@@ -1149,8 +1201,8 @@ async function dispatchEducationInternal(
     }
   }
   const { item, recipient, laneSelection, campaignId } = options.prepared ?? await prepareEducationDispatch(deps, staff.fhir, patient, body);
-  const requiredConsent = actor.kind === "system" && item.consentClass === "marketing"
-    ? { requiresMarketingConsent: true } : {};
+  const requiredConsent = { consentClass: item.consentClass,
+    ...(actor.kind === "system" && item.consentClass === "marketing" ? { requiresMarketingConsent: true } : {}) };
   const frozenContext = (providerMessageIdentifierSystem: string): string => JSON.stringify({
     kind: "education-dispatch", executingReference: staff.executingReference, body, item, recipientValue: recipient.value, laneSelection, providerMessageIdentifierSystem,
   } satisfies FrozenEducationDispatch);
@@ -1244,6 +1296,8 @@ async function dispatchEducationInternal(
         "Education send outcome is pending reconciliation; do not resend with a new key.",
       );
     }
+    const staffEducationOverride = actor.kind === "staff" && item.consentClass === "transactional";
+    const withheldEducationEmail = staffEducationOverride && !effectiveCommsPreferences(patient, {}).education.email.value;
     const result = await provider.sendEmail({
       patientReference: body.patientReference,
       toAddress: recipient.value,
@@ -1252,9 +1306,20 @@ async function dispatchEducationInternal(
       campaignType: "clinical-education",
       campaignId,
       messageId: body.idempotencyKey,
-      suppression: requiredConsent,
+      suppression: { ...requiredConsent, ...(staffEducationOverride ? { staffEducationOverride: true as const } : {}) },
     });
     if (result.outcome === "sent") {
+      if (withheldEducationEmail && actor.kind === "staff") {
+        try {
+          await writeCommsPreferences(actor.staff.fhir, body.patientReference, [{ purpose: "education", channel: "email", allowed: true }], {
+            actorReference: await preferencePractitioner(actor.staff), actorRole: actor.staff.actorRole,
+            policyUrl: actor.staff.authorizationPolicyUrl, recordedAt: deps.now?.() ?? new Date().toISOString(), surface: "staff-manual-send",
+          });
+        } catch {
+          onPreferenceFailure?.();
+          console.error("odos-mcp: education email sent; preference update failed.");
+        }
+      }
       await persistAfterSend(() => persistStaffSentSend(staff.fhir, {
         communication: reservation.communication,
         idempotencyKey: body.idempotencyKey,
@@ -1376,7 +1441,7 @@ async function dispatchEducationInternal(
     campaignId,
     messageId: body.idempotencyKey,
     suppression: actor.kind === "staff" && item.consentClass === "transactional"
-      ? { quietHoursExemption: "staff-initiated-chart-education" }
+      ? { ...requiredConsent, quietHoursExemption: "staff-initiated-chart-education" }
       : requiredConsent,
   });
   if (result.outcome === "sent") {
@@ -1479,6 +1544,7 @@ async function withStaff(
       throw error;
     }
     if ("media" in result) {
+      if (result.headers) res.set(result.headers);
       res.status(result.status).type(result.media.contentType).send(Buffer.from(result.media.bytes));
     } else {
       res.status(result.status).json(result.body);
@@ -1487,6 +1553,10 @@ async function withStaff(
     if (res.headersSent) return;
     if (error instanceof EducationSequenceAdmissionError) {
       res.status(409).json({ outcome: "refused", reason: error.message });
+      return;
+    }
+    if (error instanceof CommsPreferencePermissionError) {
+      res.status(403).json({ error: "Communication preference access denied." });
       return;
     }
     if (error instanceof CommsApiValidationError) {
@@ -2599,4 +2669,25 @@ function record(value: unknown): Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? value as Record<string, unknown>
     : {};
+}
+
+function validatedPreferenceInput<T>(parse: () => T): T {
+  try { return parse(); }
+  catch (error) { throw new CommsApiValidationError(error instanceof Error ? error.message : "Invalid communication preferences."); }
+}
+
+async function preferenceAccess<T>(operation: () => Promise<T>): Promise<T> {
+  try { return await operation(); }
+  catch (error) {
+    if (typeof error === "object" && error !== null && "status" in error && error.status === 403) {
+      throw new CommsPreferencePermissionError();
+    }
+    if (isFhirNotFound(error)) throw new CommsApiNotFoundError("Patient or consent evidence not found.");
+    throw error;
+  }
+}
+async function preferencePractitioner(staff: CommsStaff): Promise<string> {
+  const reference = await preferenceAccess(() => resolvePractitionerReference(staff.fhir, staff.staffReference));
+  if (!reference) throw new CommsApiValidationError("Communication preferences require a staff Practitioner.");
+  return reference;
 }

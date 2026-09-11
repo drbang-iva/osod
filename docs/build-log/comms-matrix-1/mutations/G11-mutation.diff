@@ -1,0 +1,10 @@
+--- mcp/src/comms/suppression-gate.ts
++++ mcp/src/comms/suppression-gate.ts
+@@ -547,6 +547,7 @@
+ ): Promise<{ patient: Patient; now: Date; result?: Exclude<SendResult, { outcome: "sent" }> }> {
+   const now = deps.now?.() ?? new Date();
+   const patient = await readPatient(deps.fhir, request.patientReference);
++  if (request.suppression.staffEducationOverride && channel === "email") return { patient, now };
+   if (isOptedOut(
+     patient,
+     channel,

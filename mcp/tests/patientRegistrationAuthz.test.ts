@@ -756,3 +756,59 @@ function inactiveMembership(id: string, membership: ProjectMembership): ProjectM
 function projectIdFromMeta(project: string | undefined): string | undefined {
   return project?.replace(/^Project\//, "");
 }
+
+test("G15 registration includes explicit communication cells attributed to registering staff", async () => {
+  const { readCommsPreferenceCells } = await import("../src/comms/suppression-gate.js");
+  const fhir = new RegistrationFhir("staff");
+  const response = await postRegistration("staff", fhir, undefined, {
+    ...REGISTRATION_BODY,
+    communicationPreferences: { cells: [{ purpose: "education", channel: "sms", allowed: false }] },
+  });
+  assert.equal(response.status, 201);
+  const created = fhir.transaction!.entry![0].resource as Patient;
+  const cells = readCommsPreferenceCells(created);
+  assert.equal(cells.length, 1);
+  assert.deepEqual({ purpose: cells[0].purpose, channel: cells[0].channel, allowed: cells[0].allowed, setBy: cells[0].setBy, surface: cells[0].surface }, {
+    purpose: "education", channel: "sms", allowed: false, setBy: { reference: "Practitioner/staff-1" }, surface: "staff-registration",
+  });
+});
+
+test("G20 registration without effective preference permission creates nothing", async () => {
+  let calls = 0;
+  const fhir: any = new Proxy({}, { get: () => async () => { calls++; throw Error("FHIR must not be reached"); } });
+  await assert.rejects(registerPatientFromDemographics({
+    ...structuredClone(REGISTRATION_BODY),
+    communicationPreferences: { cells: [{ purpose: "education", channel: "sms", allowed: true }] },
+  } as any, {
+    staffReference: "Practitioner/staff-1", actorRole: "staff", roles: ["staff"], project: { reference: "Project/practice-1" }, businessActions: ["patients.register"],
+  } as any, { serviceFhir: fhir }), (error: any) => error.status === 403);
+  assert.equal(calls, 0);
+});
+
+test("registration paper evidence and preference references share the Patient creation transaction", async () => {
+  const { readCommsPreferenceCells } = await import("../src/comms/suppression-gate.js");
+  class EvidenceRegistrationFhir extends RegistrationFhir {
+    override async executeTransaction(bundle: Bundle): Promise<Bundle> {
+      await super.executeTransaction(bundle);
+      return { resourceType: "Bundle", type: "transaction-response", entry: bundle.entry!.map((entry, index) => ({ response: {
+        status: entry.request!.method === "POST" ? "201 Created" : "200 OK",
+        location: index === 0 ? "Patient/patient-1/_history/1" : `${entry.resource!.resourceType}/synthetic-${index}/_history/1`,
+      } })) };
+    }
+  }
+  const fhir = new EvidenceRegistrationFhir("staff");
+  const response = await postRegistration("staff", fhir, undefined, {
+    ...REGISTRATION_BODY,
+    communicationPreferences: { cells: [{ purpose: "education", channel: "email", allowed: true }], confirmedVia: "paper-form", formDate: "2026-08-24" },
+  });
+  assert.equal(response.status, 201);
+  const entries = fhir.transaction!.entry!;
+  const patientEntry = entries[0];
+  const consentEntry = entries.find(entry => entry.resource?.resourceType === "Consent")!;
+  assert.ok(consentEntry);
+  const consent = consentEntry.resource as import("@medplum/fhirtypes").Consent;
+  assert.equal(consent.patient?.reference, patientEntry.fullUrl);
+  assert.equal(consent.performer?.[0].reference, patientEntry.fullUrl);
+  assert.equal(consent.dateTime, "2026-08-24");
+  assert.equal(readCommsPreferenceCells(patientEntry.resource as Patient)[0].evidence?.reference, consentEntry.fullUrl);
+});
